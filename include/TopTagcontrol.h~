@@ -1,0 +1,38 @@
+#ifndef TopTagcontrol_H
+#define TopTagcontrol_H
+#include <TMVA/Reader.h>
+#include "SFrameTools/include/TMVA_tagger.h"
+#include "SFrameTools/include/BaseHists.h"
+#include "include/BaseHists.h"
+#include "include/BaseCycleContainer.h"
+#include "HypothesisDiscriminator.h"
+#include "TH2.h"
+//#include "include/TopFitCalc.h"
+/**
+ *   Class for booking and filling TopJet histograms
+ *
+ *   
+ *   @version $Revision: 1.1 $
+ */
+
+class TopTagcontrol : public BaseHists {
+
+public:
+   /// Named constructor
+   TopTagcontrol(const char* name);
+
+   /// Default destructor
+   ~TopTagcontrol();
+
+   void Init();
+
+   void Fill();
+ // class TopTagHists
+private:
+Chi2Discriminator* tagchi2discr;
+TMVA_tagger* tmva_tagger;
+TMVA::Reader* reader;
+};
+#endif // TopTagcontrol_H
+
+

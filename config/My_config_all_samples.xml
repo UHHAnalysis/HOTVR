@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd" [
+<!ENTITY ZP500w5 SYSTEM "Analysis_xml/ZP500w5.xml">
+<!ENTITY ZP500w50 SYSTEM "Analysis_xml/ZP500w50.xml">
+<!ENTITY ZP1000w10 SYSTEM "Analysis_xml/ZP1000w10.xml">
+<!ENTITY ZP1500w150 SYSTEM "Analysis_xml/ZP1500w150.xml">
+<!ENTITY ZP1500w15 SYSTEM "Analysis_xml/ZP1500w15.xml">
+<!ENTITY ZP2000w20 SYSTEM "Analysis_xml/ZP2000w20.xml">
+<!ENTITY ZP2000w200 SYSTEM "Analysis_xml/ZP2000w200.xml">
+<!ENTITY ZP3000w30 SYSTEM "Analysis_xml/ZP3000w30.xml">
+<!ENTITY ZP3000w300 SYSTEM "Analysis_xml/ZP3000w300.xml">
+<!ENTITY ZP4000w40 SYSTEM "Analysis_xml/ZP4000w40.xml">
+<!ENTITY ZP4000w400 SYSTEM "Analysis_xml/ZP4000w400.xml">
+]>
+<!-- <JobConfiguration JobName="MyCycleJob" OutputLevel="VERBOSE"> -->
+<JobConfiguration JobName="MyCycleJob" OutputLevel="INFO">
+
+	<Library Name="libfastjet"/>
+	<Library Name="libfastjettools"/>
+	<Library Name="libSFramePlugIns"/>
+	<Library Name="libSFrameTools"/>
+	<Library Name="libAnalysis"/>
+	<Library Name="libNtuple"/>
+	<Library Name="libMyAnalysis"/>
+
+	<Package Name="SFrameCore.par" />
+	<Package Name="SFramePlugIns.par" />
+	<Package Name="Ntuple.par" />
+	<Package Name="SFrameTools.par" />
+	<Package Name="Analysis.par" />
+	<Package Name="MyAnalysis.par" />
+
+<!--	<Cycle Name="MyCycle"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/scratch/hh/dust/naf/cms/user/tlapsien/" OutputDirectory="/scratch/hh/dust/naf/cms/user/tlapsien/Analysis/" PostFix="" TargetLumi="1" >-->
+   	<Cycle Name="MyCycle" OutputDirectory="/scratch/hh/dust/naf/cms/user/tlapsien/Analysis/" PostFix="" TargetLumi="1">
+ <!--
+<InputData Lumi="1" NEventsMax="-1" Type="MC" Version="ZP500w50" Cacheable="True">
+                        <In FileName="/scratch/hh/dust/naf/cms/user/tlapsien/ZprimePreSelectionCycle.MC.ZP500w50.root" Lumi="0.0"/>
+			<InputTree Name="AnalysisTree" /> 
+			<OutputTree Name="AnalysisTree" />  
+		</InputData> 
+       
+
+	        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="ZP1000w10" Cacheable="True">
+                       <In FileName="/scratch/hh/dust/naf/cms/user/tlapsien/ZprimePreSelectionCycle.MC.ZP1000w10.root" Lumi="0.0"/>
+			<InputTree Name="AnalysisTree" /> 
+			<OutputTree Name="AnalysisTree" />  
+		</InputData> 
+-->
+	        <InputData Lumi="98755" NEventsMax="-1" Type="MC" Version="ZP1500w15" Cacheable="True">
+                          <In FileName="/scratch/hh/dust/naf/cms/user/tlapsien/ZprimePreSelectionCycle.MC.ZP1500w15.root" Lumi="98755"/>
+			<InputTree Name="AnalysisTree" /> 
+			<OutputTree Name="AnalysisTree" />  
+		</InputData> 
+<!--	        
+	        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="ZP2000w20" Cacheable="True">
+                        <In FileName="/scratch/hh/dust/naf/cms/user/tlapsien/ZprimePreSelectionCycle.MC.ZP2000w20.root" Lumi="0.0"/>
+			<InputTree Name="AnalysisTree" /> 
+			<OutputTree Name="AnalysisTree" />  
+		</InputData> 
+	        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="ZP2000w200" Cacheable="True">
+                        <In FileName="/scratch/hh/dust/naf/cms/user/tlapsien/ZprimePreSelectionCycle.MC.ZP2000w20.root" Lumi="0.0"/>
+			<InputTree Name="AnalysisTree" /> 
+			<OutputTree Name="AnalysisTree" />  
+		</InputData>  
+
+	        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="ZP3000w30" Cacheable="True">
+                        <In FileName="/scratch/hh/dust/naf/cms/user/tlapsien/ZprimePreSelectionCycle.MC.ZP3000w30.root" Lumi="0.0"/>
+			<InputTree Name="AnalysisTree" /> 
+			<OutputTree Name="AnalysisTree" />  
+		</InputData> 
+
+	        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="ZP3000w300" Cacheable="True">
+                        <In FileName="/scratch/hh/dust/naf/cms/user/tlapsien/ZprimePreSelectionCycle.MC.ZP3000w300.root" Lumi="0.0"/>
+			<InputTree Name="AnalysisTree" /> 
+			<OutputTree Name="AnalysisTree" />  
+		</InputData> 
+	        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="ZP4000w40" Cacheable="True">
+                        <In FileName="/scratch/hh/dust/naf/cms/user/tlapsien/ZprimePreSelectionCycle.MC.ZP4000w40.root" Lumi="0.0"/>
+			<InputTree Name="AnalysisTree" /> 
+			<OutputTree Name="AnalysisTree" />  
+		</InputData> 
+	        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="ZP4000w400" Cacheable="True">
+                        <In FileName="/scratch/hh/dust/naf/cms/user/tlapsien/ZprimePreSelectionCycle.MC.ZP4000w400.root" Lumi="0.0"/>
+			<InputTree Name="AnalysisTree" /> 
+			<OutputTree Name="AnalysisTree" />  
+		</InputData>
+
+-->
+<!--	
+  <InputData Lumi="118975" NEventsMax="-1" Type="MC" Version="ZP500w5" Cacheable="True">
+                        &ZP500w5;
+			<InputTree Name="AnalysisTree" /> 
+			  
+		</InputData> 
+
+	        <InputData Lumi="110507" NEventsMax="-1" Type="MC" Version="ZP500w50" Cacheable="True">
+                        &ZP500w50;
+			<InputTree Name="AnalysisTree" /> 
+			  
+		</InputData> 
+
+-->	       
+<!--	        <InputData Lumi="103095" NEventsMax="-1" Type="MC" Version="ZP1000w10" Cacheable="True">
+                        &ZP1000w10;
+			<InputTree Name="AnalysisTree" /> 
+			  
+		</InputData> 
+-->
+<!--	        
+
+	        <InputData Lumi="97349" NEventsMax="-1" Type="MC" Version="ZP1500w15" Cacheable="True">
+                        &ZP1500w15;
+			<InputTree Name="AnalysisTree" /> 
+			  
+		</InputData> 
+	        <InputData Lumi="98775" NEventsMax="-1" Type="MC" Version="ZP1500w150" Cacheable="True">
+                        &ZP1500w150;
+			<InputTree Name="AnalysisTree" /> 
+			  
+		</InputData> 
+	        <InputData Lumi="94817" NEventsMax="-1" Type="MC" Version="ZP2000w20" Cacheable="True">
+                        &ZP2000w20;
+			<InputTree Name="AnalysisTree" /> 
+			  
+		</InputData> 
+	        <InputData Lumi="97240" NEventsMax="-1" Type="MC" Version="ZP2000w200" Cacheable="True">
+                        &ZP2000w200;
+			<InputTree Name="AnalysisTree" /> 
+			  
+		</InputData>  
+
+	        <InputData Lumi="96371" NEventsMax="-1" Type="MC" Version="ZP3000w30" Cacheable="True">
+                        &ZP3000w30;
+			<InputTree Name="AnalysisTree" /> 
+			  
+		</InputData> 
+
+	        <InputData Lumi="100554" NEventsMax="-1" Type="MC" Version="ZP3000w300" Cacheable="True">
+                        &ZP3000w300;
+			<InputTree Name="AnalysisTree" /> 
+			  
+		</InputData> 
+	        <InputData Lumi="102490" NEventsMax="-1" Type="MC" Version="ZP4000w40" Cacheable="True">
+                        &ZP4000w40;
+			<InputTree Name="AnalysisTree" /> 
+			  
+		</InputData> 
+	        <InputData Lumi="103388" NEventsMax="-1" Type="MC" Version="ZP4000w400" Cacheable="True">
+                        &ZP4000w400;
+			<InputTree Name="AnalysisTree" /> 
+			  
+		</InputData> 
+-->
+
+		<UserConfig>
+ <Item Name="Electron_Or_Muon_Selection" Value="Electron" />
+
+		   <Item Name="JetCollection" Value="goodPatJetsPFlow" />  
+		   <Item Name="ElectronCollection" Value="selectedPatElectronsPFlowLoose" /> 
+		   <Item Name="MuonCollection" Value="selectedPatMuonsPFlowLoose" /> 
+		   <Item Name="TauCollection" Value="selectedPatTausPFlow" /> 
+<!--		   <Item Name="PhotonCollection" Value="patPhotons" /> -->
+		   <Item Name="PrimaryVertexCollection" Value="goodOfflinePrimaryVertices" /> 
+	 <Item Name="METName" Value="patMETsPFlow" />  
+		   <Item Name="TopJetCollection" Value="goodPatJetsCATopTagPFPacked" />
+		   <Item Name="TopJetCollectionGen" Value="caTopTagGen" />
+		<!--   <Item Name="PrunedJetCollection" Value="goodPatJetsCA8PrunedPF" />-->  
+		   <Item Name="GenParticleCollection" Value="GenParticles" /> 
+
+           <Item Name="JECFileLocation" Value="/afs/desy.de/user/p/peiffer/JECFiles" />
+        <!--   <Item Name="JECDataGlobalTag" Value="FT_53_V10_AN3" />
+           <Item Name="JECMCGlobalTag" Value="START53_V15" />
+           <Item Name="JECJetCollection" Value="AK5PFchs" />-->
+
+           <Item Name="ReversedElectronSelection" Value="false" />
+		      
+                </UserConfig>
+	</Cycle>
+</JobConfiguration>
