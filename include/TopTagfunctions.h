@@ -18,7 +18,7 @@
 
 
 
-Double_t HelicityAngle(TLorentzVector j1, TLorentzVector j2);
+
 bool jet_matches_top(TopJet topjet, float cone);
 bool jet_decays_hadronic(TopJet topjet, float cone);
 bool jet_decays_leptonic(TopJet topjet, float cone);
