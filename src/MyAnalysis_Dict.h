@@ -36,9 +36,11 @@ extern void G__set_cpp_environmentMyAnalysis_Dict();
 #include "include/MyCycle.h"
 #include "include/MyHists.h"
 #include "include/SubstructureHists.h"
+#include "include/TMVA_tagger.h"
 #include "include/TopFitCalc.h"
 #include "include/TopTagHists.h"
 #include "include/TopTagcontrol.h"
+#include "include/TopTagfunctions.h"
 #include <algorithm>
 namespace std { }
 using namespace std;

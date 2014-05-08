@@ -2,6 +2,7 @@
 #include "include/TopTagHists.h"
 #include "include/TopFitCalc.h"
 #include <iostream>
+#include "include/TopTagfunctions.h"
 
 using namespace std;
 

@@ -2,6 +2,7 @@
 #include "include/SubstructureHists.h"
 #include "include/TopFitCalc.h"
 #include "NtupleWriter/include/JetProps.h"
+#include "include/TopTagfunctions.h"
 #include <iostream>
 
 using namespace std;

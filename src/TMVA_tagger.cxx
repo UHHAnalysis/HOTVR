@@ -7,6 +7,7 @@
 #include <fastjet/ClusterSequenceArea.hh>
 #include <fastjet/GhostedAreaSpec.hh>
 #include "SFrameTools/include/EventCalc.h"
+#include "include/TopTagfunctions.h"
 
 using namespace std;
 
