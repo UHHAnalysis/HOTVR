@@ -4,7 +4,7 @@
 #define MyCycle_H
 
 // SFrame include(s):
-#include "../SFrameTools/include/TMVA_tagger.h"
+#include "include/TMVA_tagger.h"
 #include "include/AnalysisCycle.h"
 #include "include/SelectionModules.h"
 #include "include/MyHists.h"

@@ -8,7 +8,7 @@
 
 // Local include(s):
 #include <TMVA/Reader.h>
-#include "SFrameTools/include/TMVA_tagger.h"
+#include "include/TMVA_tagger.h"
 #include "include/BaseHists.h"
 #include "include/BaseCycleContainer.h"
 #include "HypothesisDiscriminator.h"

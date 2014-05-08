@@ -1,7 +1,7 @@
 #ifndef TopTagcontrol_H
 #define TopTagcontrol_H
 #include <TMVA/Reader.h>
-#include "SFrameTools/include/TMVA_tagger.h"
+#include "include/TMVA_tagger.h"
 #include "SFrameTools/include/BaseHists.h"
 #include "include/BaseHists.h"
 #include "include/BaseCycleContainer.h"

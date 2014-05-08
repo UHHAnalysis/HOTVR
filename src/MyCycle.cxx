@@ -8,8 +8,8 @@ using namespace std;
 // Local include(s):
 
 #include "include/MyCycle.h"
-#include "include/TopFitCalc.h"
-#include "../SFrameTools/include/TMVA_tagger.h"
+#include "../SFrameTools/include/TopFitCalc.h"
+#include "include/TMVA_tagger.h"
 #include <TMVA/Reader.h>
 
 

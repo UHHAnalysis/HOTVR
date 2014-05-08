@@ -13,7 +13,7 @@
 //#include "include/TopTagcontrol.h"
 #include "include/Mistagcontrol.h"
 #include "include/HypothesisHists.h"
-#include "SFrameTools/include/TMVA_tagger.h"
+#include "include/TMVA_tagger.h"
 #include "EventHists.h"
 #include "JetHists.h"
 #include "ElectronHists.h"

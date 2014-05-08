@@ -1,6 +1,6 @@
 #include "SFrameTools/include/EventCalc.h"
 #include "include/TopTagcontrol.h"
-#include "include/TopFitCalc.h"
+#include "../SFrameTools/include/TopFitCalc.h"
 #include <iostream>
 
 using namespace std;

@@ -9,7 +9,7 @@ using namespace std;
 
 #include "include/MistagCycle.h"
 #include "include/TopFitCalc.h"
-#include "../SFrameTools/include/TMVA_tagger.h"
+#include "include/TMVA_tagger.h"
 #include <TMVA/Reader.h>
 
 
