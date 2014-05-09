@@ -288,30 +288,31 @@ void MyCycle::ExecuteEvent( const SInputData& id, Double_t weight) throw( SError
  Chi2Discriminator* tagchi2discr;
   // first step: call Execute event of base class to perform basic consistency checks
   // also, the good-run selection is performed there and the calculator is reset
- 
-   EventCalc* calc = EventCalc::Instance();
-   TopFitCalc* topfit = TopFitCalc::Instance();
+  EventCalc* calc = EventCalc::Instance();
+BaseCycleContainer* bcc = calc->GetBaseCycleContainer();
+  
+ TopFitCalc* topfit = TopFitCalc::Instance();
    
-    BaseCycleContainer* bcc = calc->GetBaseCycleContainer();
-      bcc->recoHyps->clear();
-   topfit->CalculateSelection(); 
-   tagchi2discr = new Chi2Discriminator();
+   
+    bcc->recoHyps->clear();
+      topfit->CalculateSelection(); 
+      /*  tagchi2discr = new Chi2Discriminator();
    tagchi2discr->FillDiscriminatorValues();
-   ReconstructionHypothesis *discr = tagchi2discr->GetBestHypothesis();
+   ReconstructionHypothesis *discr = tagchi2discr->GetBestHypothesis();*/
     //double discr_cut=discr->discriminator("Chi2_tlep");
-   HistspreSelection->Fill();//Fill before selection
+// HistspreSelection->Fill();//Fill before selection
    //START SELECTION
    //   if(discr_cut<25) HistspostSelection->Fill();
-   bool bselection=false;
+      bool bselection=false;
    for (unsigned int i =0; i<bcc->jets->size(); ++i)
     {
       Jet jet =  bcc->jets->at(i);
       if(IsTagged(jet,e_CSVT)) bselection=true;
       }
-  
+    
       
-
-
+/*sqrt(pow(topjet.phi()-top_lep.phi(),2)+pow(topjet.eta()-top_lep.eta(),2))<2.7 ||  sqrt(pow(topjet.phi()-top_lep.phi(),2)+pow(topjet.eta()-top_lep.eta(),2))>3.5*/
+   /*
       bool fillhisto=true;
       LorentzVector top_lep = discr->toplep_v4();
       for (unsigned int i =0; i<bcc->topjets->size(); ++i){
@@ -319,14 +320,14 @@ void MyCycle::ExecuteEvent( const SInputData& id, Double_t weight) throw( SError
 	  bool jet_distance=true;
       bool selection_thad=true;
       if(sqrt(pow(topjet.phi()-top_lep.phi(),2)+pow(topjet.eta()-top_lep.eta(),2))<2.7 ||  sqrt(pow(topjet.phi()-top_lep.phi(),2)+pow(topjet.eta()-top_lep.eta(),2))>3.5) selection_thad = false;
-      if(selection_thad/*sqrt(pow(topjet.phi()-top_lep.phi(),2)+pow(topjet.eta()-top_lep.eta(),2))<2.7 ||  sqrt(pow(topjet.phi()-top_lep.phi(),2)+pow(topjet.eta()-top_lep.eta(),2))>3.5*/) {
+      if(selection_thad) {
 	for(unsigned t=0;t<bcc->jets->size();++t){
 	     Jet jet = bcc->jets->at(t);
 	    if((sqrt(pow(topjet.phi()-jet.phi(),2)+pow(topjet.eta()-jet.eta(),2))>0.8 &&sqrt(pow(topjet.phi()-jet.phi(),2)+pow(topjet.eta()-jet.eta(),2))<1.8) ) jet_distance=false;
 	    if((sqrt(pow(top_lep.phi()-jet.phi(),2)+pow(top_lep.eta()-jet.eta(),2))>1 &&sqrt(pow(top_lep.phi()-jet.phi(),2)+pow(top_lep.eta()-jet.eta(),2))<2.2)) jet_distance=false;            if((sqrt(pow(top_lep.phi()-jet.phi(),2)+pow(top_lep.eta()-jet.eta(),2))>4)) jet_distance=false;
 	}
-	if(bselection && jet_distance && fillhisto) {
-	    HistspostSelection->Fill();
+		if(bselection && jet_distance && fillhisto) {
+		   HistspostSelection->Fill();
 	    eventhists_post->Fill();
 	    jethists_post->Fill();
 	    elehists_post->Fill();
@@ -344,11 +345,11 @@ void MyCycle::ExecuteEvent( const SInputData& id, Double_t weight) throw( SError
 	    if(tmva_tagger->IsTobiasTagged(topjet))  HistsSubstructure_tobias->Fill2(topjet,mva_value);
 	    HistsSubstructure_alljets->Fill2(topjet,mva_value);
 	    fillhisto=false;
-	}
+	    }
       }
 	   	
       }
-
+   */
 
 
       //  HistsTopTag->Fill();
