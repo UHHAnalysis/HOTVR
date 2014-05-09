@@ -13,7 +13,8 @@
 //
 // #pragma link C++ class MySuperClass+;
 
-#pragma link C++ class MyCycle+;
+#pragma link C++ class TTbarSelectionCycle+;
 #pragma link C++ class MistagCycle+;
+#pragma link C++ class MistagPreSelectionCycle+;
 
 #endif // __CINT__
