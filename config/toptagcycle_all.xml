@@ -21,8 +21,8 @@
 	<Package Name="Analysis.par" />
 	<Package Name="MyAnalysis.par" />
 
-	<Cycle Name="MyCycle"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/tlapsien/PROOF/" OutputDirectory="/nfs/dust/cms/user/tlapsien/Analysis/" PostFix="_post" TargetLumi="1" >
-<!--	<Cycle Name="MyCycle"  OutputDirectory="/nfs/dust/cms/user/tlapsien/Analysis/" PostFix="_bla" TargetLumi="1" >-->
+<!--	<Cycle Name="TTbarSelectionCycle"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/tlapsien/PROOF/" OutputDirectory="/nfs/dust/cms/user/tlapsien/Analysis/" PostFix="_post" TargetLumi="1" >-->
+	<Cycle Name="TTbarSelectionCycle"  OutputDirectory="/nfs/dust/cms/user/tlapsien/Analysis/" PostFix="_bla" TargetLumi="1" >
 
 
 		<InputData Lumi="1.0" NEventsMax="-1"  Type="DATA" Version="DATA" Cacheable="False">
