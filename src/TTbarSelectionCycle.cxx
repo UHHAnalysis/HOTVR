@@ -101,7 +101,10 @@ void TTbarSelectionCycle::BeginInputData( const SInputData& id ) throw( SError )
 
   // histograms without any cuts
   // RegisterHistCollection( new MyHists("NoCuts") );
-
+    Selection* TopTagSel = new Selection("TopTagSelection");
+    TopTagSel->addSelectionModule(new NTopJetSelection(1,int_infinity(),350,2.5));// top jet
+    TopTagSel->addSelectionModule(new NTopTagSelection(1,int_infinity()));
+    TopTagSel->addSelectionModule(new TopTagOverlapSelection());
    static Chi2Discriminator* m_chi2discr = new Chi2Discriminator();
      RegisterHistCollection( new TopTagHists("test3"));
      RegisterHistCollection( new SubstructureHists("substructure_alljets"));
@@ -130,6 +133,11 @@ void TTbarSelectionCycle::BeginInputData( const SInputData& id ) throw( SError )
     RegisterHistCollection( new MuonHists("Muon_Postsel") );
     RegisterHistCollection( new TauHists("Tau_Postsel") );
     RegisterHistCollection( new TopJetHists("TopJets_Postsel") );
+    
+     RegisterSelection(TopTagSel);
+
+
+   
   /*  RegisterHistCollection( new HypothesisHists("Chi2_NoCuts", m_chi2discr ) );
 
   //histograms with and without b tagging
@@ -278,6 +286,7 @@ void TTbarSelectionCycle::ExecuteEvent( const SInputData& id, Double_t weight) t
     BaseHists* muonhists_post = GetHistCollection((std::string)("Muon_Postsel"));
     BaseHists* tauhists_post = GetHistCollection((std::string)("Tau_Postsel"));
     BaseHists* topjethists_post = GetHistCollection((std::string)("TopJets_Postsel"));
+    static Selection* TopTagSel = GetSelection("TopTagSelection");
     eventhists->Fill();
     jethists->Fill();
     elehists->Fill();
@@ -289,30 +298,38 @@ void TTbarSelectionCycle::ExecuteEvent( const SInputData& id, Double_t weight) t
   // first step: call Execute event of base class to perform basic consistency checks
   // also, the good-run selection is performed there and the calculator is reset
   EventCalc* calc = EventCalc::Instance();
-BaseCycleContainer* bcc = calc->GetBaseCycleContainer();
+  BaseCycleContainer* bcc = calc->GetBaseCycleContainer();
   
- TopFitCalc* topfit = TopFitCalc::Instance();
+  TopFitCalc* topfit = TopFitCalc::Instance();
    
    
-    bcc->recoHyps->clear();
-      topfit->CalculateSelection(); 
-      /*  tagchi2discr = new Chi2Discriminator();
-   tagchi2discr->FillDiscriminatorValues();
-   ReconstructionHypothesis *discr = tagchi2discr->GetBestHypothesis();*/
-    //double discr_cut=discr->discriminator("Chi2_tlep");
-// HistspreSelection->Fill();//Fill before selection
+  bcc->recoHyps->clear();
+  topfit->Reset();
+   topfit->CalculateSelection();
+   //   std::cout << bcc->recoHyps->size() << std::endl;
+  if(bcc->recoHyps->size()<1) {
+    topfit->FillHighMassTTbarHypotheses();}
+    tagchi2discr = new Chi2Discriminator();
+    tagchi2discr->FillDiscriminatorValues();
+
+  ReconstructionHypothesis *discr = tagchi2discr->GetBestHypothesis();
+  double discr_cut=discr->discriminator("Chi2_tlep");
+ 
+  HistspreSelection->Fill();//Fill before selection
    //START SELECTION
    //   if(discr_cut<25) HistspostSelection->Fill();
-      bool bselection=false;
+     bool bselection=false;
    for (unsigned int i =0; i<bcc->jets->size(); ++i)
     {
       Jet jet =  bcc->jets->at(i);
       if(IsTagged(jet,e_CSVT)) bselection=true;
       }
     
+
+  
       
 /*sqrt(pow(topjet.phi()-top_lep.phi(),2)+pow(topjet.eta()-top_lep.eta(),2))<2.7 ||  sqrt(pow(topjet.phi()-top_lep.phi(),2)+pow(topjet.eta()-top_lep.eta(),2))>3.5*/
-   /*
+   
       bool fillhisto=true;
       LorentzVector top_lep = discr->toplep_v4();
       for (unsigned int i =0; i<bcc->topjets->size(); ++i){
@@ -349,7 +366,7 @@ BaseCycleContainer* bcc = calc->GetBaseCycleContainer();
       }
 	   	
       }
-   */
+   
 
 
       //  HistsTopTag->Fill();
