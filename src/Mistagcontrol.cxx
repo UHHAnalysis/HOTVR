@@ -25,6 +25,9 @@ void Mistagcontrol::Init()
   Book(TH1F("MVA350_ly","MVA values after selection",400,-2,2));
   Book(TH1F("MVA2","MVA values before selection",400,-2,2));
   Book(TH1F("MVA2_ly","MVA values before selection",400,-2,2));
+  Book(TH1F("SD","chi (microjets) shower deconstruction",21,-10,10));
+  Book(TH1F("SD2","chi(subjets) shower deconstruction",21,-10,10));
+  Book( TH1F( "NMicrojets", "number of microjets", 11,-0.5,10.5) ); 
   Book( TH1F( "NbJets", "number of b-jets", 8, -0.5, 7.5 ) );
   Book( TH1F( "NbJets_ly", "number of b-jets", 8, -0.5, 7.5 ) );
   Book( TH1F( "psi02_ly","Jetshapes #Psi (0.2)",140,0,1.4));
@@ -48,6 +51,8 @@ void Mistagcontrol::Init()
   Book( TH1F( "pT_ly"," p_{T} topjets",100,0,2000));
   Book( TH1F( "pT_s1"," p_{T} topjets (selection)",50,0,2000));
   Book( TH1F( "pT_s1_ly"," p_{T} topjets (selection)",50,0,2000));
+  Book( TH1F( "pT_s2"," p_{T} CA15 (selection)",50,0,2000));
+  Book( TH1F( "pT_s2_ly"," p_{T} CA15 (selection)",50,0,2000));
   Book( TH1F( "pT_s1_cms_tagged"," p_{T} topjets (cms tagged)",50,0,2000));
   Book( TH1F( "pT_s1_cms_tagged_ly"," p_{T} topjets (cms tagged)",50,0,2000));
    Book( TH1F( "pT_s1_hep_tagged"," p_{T} topjets (hep tagged)",50,0,2000));
@@ -56,6 +61,8 @@ void Mistagcontrol::Init()
   Book( TH1F( "pT_s1_arne_tagged_ly"," p_{T} topjets (arne tagged)",50,0,2000));
    Book( TH1F( "pT_s1_tobias_tagged"," p_{T} topjets (tobias tagged)",50,0,2000));
   Book( TH1F( "pT_s1_tobias_tagged_ly"," p_{T} topjets (tobias tagged)",50,0,2000));
+  Book( TH1F( "pT_s2_hep2_tagged_ly"," p_{T} CA15 (hep tagged)",50,0,2000));
+  Book( TH1F( "pT_s2_hep2_tagged"," p_{T} CA15 (hep tagged)",50,0,2000));
   Book( TH1F( "eta"," #eta topjets",100,-3,3));
   Book( TH1F( "eta_ly"," #eta topjets",100,-3,3));
   Book( TH1F( "phi"," #phi topjets",100,-M_PI,M_PI));
@@ -133,6 +140,7 @@ void Mistagcontrol::Init()
   Book( TH1F( "MVA_eff", "efficiency of MVA",200,-1,1));
   // tmva_tagger=TMVA_tagger::Instance();
   tmva_tagger=new TMVA_tagger();
+   Showerdeconstruction_tagger= new Showerdeconstruction();
   //tmva_tagger->Set_Reader("Uncorr+3");
   // tmva_tagger->Set_Reader("NPVweight");
   //tmva_tagger->Set_Reader("bestown70");
@@ -273,10 +281,19 @@ void Mistagcontrol::Fill()
 	Hist("pT_s1_cms_tagged")->Fill(topjet.pt(),weight);
 	Hist("pT_s1_cms_tagged_ly")->Fill(topjet.pt(),weight);
       }
-      if(HepTopTagFull(topjet,calc->GetPFParticles())) {
+      /* if(HepTopTagFull(topjet,calc->GetPFParticles())) {
 	Hist("pT_s1_hep_tagged")->Fill(topjet.pt(),weight);
 	Hist("pT_s1_hep_tagged_ly")->Fill(topjet.pt(),weight);
-      }
+	}*/
+        for (unsigned int k =0; k<bcc->higgstagjets->size(); ++k){
+	  TopJet CA15jet =  bcc->higgstagjets->at(k);
+	  if((sqrt(pow(topjet.phi()-CA15jet.phi(),2)+pow(topjet.eta()-CA15jet.eta(),2))<1.5) && HepTopTag(CA15jet)){
+	    Hist("pT_s1_hep_tagged")->Fill(topjet.pt(),weight);
+	    Hist("pT_s1_hep_tagged_ly")->Fill(topjet.pt(),weight);
+	 }
+	
+	}
+
       if(tmva_tagger->IsTagged("NPVweight",topjet,0.840,mva_value)){
 	Hist("pT_s1_arne_tagged")->Fill(topjet.pt(),weight);
 	Hist("pT_s1_arne_tagged_ly")->Fill(topjet.pt(),weight);  
@@ -286,8 +303,13 @@ void Mistagcontrol::Fill()
 	Hist("pT_s1_tobias_tagged_ly")->Fill(topjet.pt(),weight);  
       }
       }
-    
-     
+      //shower deconstruction
+      double chi_2= Showerdeconstruction_tagger->Chi(topjet);
+      double chi= Showerdeconstruction_tagger->ChiMicro(topjet);
+      Hist("SD")->Fill(log(chi),weight);
+      Hist("SD2")->Fill(log(chi_2),weight);
+      Hist("NMicrojets")->Fill(Showerdeconstruction_tagger->GetNmicrojets(topjet));
+
       Hist("eta") -> Fill(topjet.eta(), weight);
       Hist("eta_ly") -> Fill(topjet.eta(), weight);
       Hist("phi") -> Fill(topjet.phi(), weight);
@@ -313,6 +335,20 @@ void Mistagcontrol::Fill()
       Hist("MVA2_ly")->Fill(mva_value,weight);
      
     }
+
+  //some controlplots for CA15
+  if (antitag)  for (unsigned int i =0; i<bcc->higgstagjets->size(); ++i){
+      TopJet CA15jet =  bcc->higgstagjets->at(i);
+	Hist("pT_s2")->Fill(CA15jet.pt(),weight);
+	Hist("pT_s2_ly")->Fill(CA15jet.pt(),weight);
+	if(HepTopTag(CA15jet)) {
+	  Hist("pT_s2_hep2_tagged")->Fill(CA15jet.pt(),weight);
+	  Hist("pT_s2_hep2_tagged_ly")->Fill(CA15jet.pt(),weight);
+	} 
+    }
+
+
+  
   
   
 

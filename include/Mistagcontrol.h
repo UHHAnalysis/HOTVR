@@ -7,6 +7,7 @@
 #include "include/BaseCycleContainer.h"
 #include "HypothesisDiscriminator.h"
 #include "TH2.h"
+#include "include/Showerdeconstruction.h"
 //#include "include/TopFitCalc.h"
 /**
  *   Class for booking and filling TopJet histograms
@@ -31,6 +32,7 @@ public:
 private:
 Chi2Discriminator* tagchi2discr;
 TMVA_tagger* tmva_tagger;
+  Showerdeconstruction* Showerdeconstruction_tagger;
 //TMVA::Reader* reader;
 };
 #endif // TopTagcontrol_H

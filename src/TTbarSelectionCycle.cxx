@@ -113,6 +113,10 @@ void TTbarSelectionCycle::BeginInputData( const SInputData& id ) throw( SError )
        RegisterHistCollection( new SubstructureHists("substructure_mva"));
        RegisterHistCollection( new SubstructureHists("substructure_tobias"));
         RegisterHistCollection( new SubstructureHists("substructure_pt700"));
+
+ RegisterHistCollection( new SubstructureHists("substructure_CA15jets"));
+
+
    RegisterHistCollection( new TopTagcontrol("preSelection"));
   RegisterHistCollection( new TopTagcontrol("postSelection"));
 
@@ -269,6 +273,9 @@ void TTbarSelectionCycle::ExecuteEvent( const SInputData& id, Double_t weight) t
      BaseHists* HistsSubstructure_mva= GetHistCollection("substructure_mva");
       BaseHists* HistsSubstructure_tobias= GetHistCollection("substructure_tobias");
        BaseHists* HistsSubstructure_pt700= GetHistCollection("substructure_pt700");
+ BaseHists* HistsSubstructure_CA15= GetHistCollection("substructure_CA15jets");
+
+
    BaseHists* HistspreSelection = GetHistCollection("preSelection");
  BaseHists* HistspostSelection = GetHistCollection("postSelection");
 
@@ -336,12 +343,14 @@ void TTbarSelectionCycle::ExecuteEvent( const SInputData& id, Double_t weight) t
 	TopJet topjet = bcc->topjets->at(i);
 	  bool jet_distance=true;
       bool selection_thad=true;
-      if(sqrt(pow(topjet.phi()-top_lep.phi(),2)+pow(topjet.eta()-top_lep.eta(),2))<2.7 ||  sqrt(pow(topjet.phi()-top_lep.phi(),2)+pow(topjet.eta()-top_lep.eta(),2))>3.5) selection_thad = false;
+      // if(sqrt(pow(topjet.phi()-top_lep.phi(),2)+pow(topjet.eta()-top_lep.eta(),2))<2.7 ||  sqrt(pow(topjet.phi()-top_lep.phi(),2)+pow(topjet.eta()-top_lep.eta(),2))>3.5) selection_thad = false;
+      if(abs(topjet.phi()-top_lep.phi())<2.1) selection_thad = false;
       if(selection_thad) {
 	for(unsigned t=0;t<bcc->jets->size();++t){
 	     Jet jet = bcc->jets->at(t);
 	    if((sqrt(pow(topjet.phi()-jet.phi(),2)+pow(topjet.eta()-jet.eta(),2))>0.8 &&sqrt(pow(topjet.phi()-jet.phi(),2)+pow(topjet.eta()-jet.eta(),2))<1.8) ) jet_distance=false;
-	    if((sqrt(pow(top_lep.phi()-jet.phi(),2)+pow(top_lep.eta()-jet.eta(),2))>1 &&sqrt(pow(top_lep.phi()-jet.phi(),2)+pow(top_lep.eta()-jet.eta(),2))<2.2)) jet_distance=false;            if((sqrt(pow(top_lep.phi()-jet.phi(),2)+pow(top_lep.eta()-jet.eta(),2))>4)) jet_distance=false;
+	    if((sqrt(pow(top_lep.phi()-jet.phi(),2)+pow(top_lep.eta()-jet.eta(),2))>1 &&sqrt(pow(top_lep.phi()-jet.phi(),2)+pow(top_lep.eta()-jet.eta(),2))<2.2)) jet_distance=false;            
+	    if((sqrt(pow(top_lep.phi()-jet.phi(),2)+pow(top_lep.eta()-jet.eta(),2))>4)) jet_distance=false;
 	}
 		if(bselection && jet_distance && fillhisto) {
 		   HistspostSelection->Fill();
@@ -366,7 +375,12 @@ void TTbarSelectionCycle::ExecuteEvent( const SInputData& id, Double_t weight) t
       }
 	   	
       }
-   
+
+      //some CA15 control plots
+      for (unsigned int i =0; i<bcc->higgstagjets->size(); ++i){
+      TopJet CA15jet =  bcc->higgstagjets->at(i);
+       HistsSubstructure_CA15->Fill2(CA15jet,0);
+      }
 
 
       //  HistsTopTag->Fill();

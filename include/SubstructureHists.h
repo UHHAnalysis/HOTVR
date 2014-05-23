@@ -10,6 +10,7 @@
 #include "TH2.h"
 #include "Utils.h"
 #include "EventCalc.h"
+#include "include/Showerdeconstruction.h"
 //#include "include/TopFitCalc.h"
 /**
  *   Class for booking and filling TopJet histograms
@@ -30,6 +31,8 @@ public:
    void Init();
    void Fill();
    void Fill2(TopJet topjet, double mva_value);
+ private:
+ Showerdeconstruction* Showerdeconstruction_tagger;
  // class TopTagHists
 };
 #endif // TopTagcontrol_H

@@ -74,6 +74,9 @@ void SubstructureHists::Init()
   Book( TH1F( "second_jet_moment", "topjet second moment",100,0,1));
   Book(TH1F("MVA","MVA values after selection",100,-2,2));
   Book(TH1F("MVA_ly","MVA values after selection",100,-2,2));
+  Book(TH1F("SD","chi (microjets) shower deconstruction",21,-10,10));
+  Book(TH1F("SD2","chi(subjets) shower deconstruction",21,-10,10));
+  Book( TH1F( "NMicrojets", "number of microjets", 11,-0.5,10.5) );
   /*  Book(TH1F("MVA","MVA values after selection",400,-2,2));
   Book(TH1F("MVA_ly","MVA values after selection",400,-2,2));
   Book(TH1F("MVA350","MVA values after selection",400,-2,2));
@@ -182,7 +185,7 @@ void SubstructureHists::Init()
   Book( TH1F( "Nsubjettiness3_2_1_ly", "#tau_{2}/#tau_{3} leading topjet", 50, 0.0, 1.0 ) );
   Book( TH2F( "MVA_pt","MVA vs pt",200,-1,1,50,0,2000));
   Book( TH1F( "MVA_eff", "efficiency of MVA",200,-1,1));*/
- 
+   Showerdeconstruction_tagger= new Showerdeconstruction();
 
 }
 
@@ -195,7 +198,7 @@ void SubstructureHists::Fill2(TopJet topjet, double mva_value)
    Hist("MVA")->Fill(mva_value,weight);
    Hist("MVA_ly")->Fill(mva_value,weight);
   Hist("npv")->Fill(npv,weight);
-  
+ 
   int Nsubjets=topjet.numberOfDaughters();
   Hist("nsubjets")->Fill(Nsubjets,weight);
   LorentzVector allsubjets(0,0,0,0);
@@ -239,18 +242,18 @@ void SubstructureHists::Fill2(TopJet topjet, double mva_value)
   Hist("tau2")->Fill(tau2,weight);
   Hist("tau3")->Fill(tau3,weight);
   //pruned subjetiness
-  double tau1pruned = jp.GetPrunedNsubjettiness(1, Njettiness::onepass_kt_axes, 1., 0.8);
+  /* double tau1pruned = jp.GetPrunedNsubjettiness(1, Njettiness::onepass_kt_axes, 1., 0.8);
   double tau2pruned = jp.GetPrunedNsubjettiness(2, Njettiness::onepass_kt_axes, 1., 0.8);
   double tau3pruned = jp.GetPrunedNsubjettiness(3, Njettiness::onepass_kt_axes, 1., 0.8);
   Hist("tau1pruned")->Fill(tau1pruned,weight);
   Hist("tau2pruned")->Fill(tau2pruned,weight);
-  Hist("tau3pruned")->Fill(tau3pruned,weight);
+  Hist("tau3pruned")->Fill(tau3pruned,weight);*/
   
   //ratio subjetiness
   Hist("tau3tau2")->Fill(tau3/tau2,weight);
   Hist("tau2tau1")->Fill(tau2/tau1,weight);
-  Hist("tau3tau2pruned")->Fill(tau3pruned/tau2pruned,weight);
-  Hist("tau2tau1pruned")->Fill(tau2pruned/tau1pruned,weight);
+  /*  Hist("tau3tau2pruned")->Fill(tau3pruned/tau2pruned,weight);
+      Hist("tau2tau1pruned")->Fill(tau2pruned/tau1pruned,weight);*/
   
   double Q_volatility = topjet.qjets_volatility();
   Hist("Qvolatility")->Fill(Q_volatility,weight);
@@ -392,6 +395,13 @@ void SubstructureHists::Fill2(TopJet topjet, double mva_value)
   int nsubjets=0;
   TopTag(topjet,mjet,nsubjets,mmin);
   if(mmin!=0) Hist("subjet_mmin")->Fill(mmin,weight);
+
+  //Shower deconstruction
+   double chi_2= Showerdeconstruction_tagger->Chi(topjet);
+   double chi= Showerdeconstruction_tagger->ChiMicro(topjet);
+   Hist("SD")->Fill(log(chi),weight);
+   Hist("SD2")->Fill(log(chi_2),weight);
+   Hist("NMicrojets")->Fill(Showerdeconstruction_tagger->GetNmicrojets(topjet));
  
  
 }

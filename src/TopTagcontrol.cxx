@@ -25,6 +25,9 @@ void TopTagcontrol::Init()
   Book(TH1F("MVA350_ly","MVA values after selection",1600,-2,2));
   Book(TH1F("MVA2","MVA values before selection",400,-2,2));
   Book(TH1F("MVA2_ly","MVA values before selection",400,-2,2));
+  Book(TH1F("SD","chi (microjets) shower deconstruction",21,-10,10));
+   Book(TH1F("SD2","chi(subjets) shower deconstruction",21,-10,10));
+     Book( TH1F( "NMicrojets", "number of microjets", 11,-0.5,10.5) );
   Book( TH1F( "Chi2", "chi2 top_lep",400,0,100));
   Book( TH1F( "Chi2_ly", "chi2 top_lep",400,0,100));
   Book( TH1F( "pT_toplep", "reconstructed leptonic top p_{T}", 100, 0, 2000));
@@ -52,9 +55,13 @@ void TopTagcontrol::Init()
   Book( TH1F( "pT_ly"," p_{T} topjets",100,0,2000));
   Book( TH1F( "pT_s1"," p_{T} topjets (selection)",50,0,2000));
   Book( TH1F( "pT_s1_ly"," p_{T} topjets (selection)",50,0,2000));
+   Book( TH1F( "pT_s2"," p_{T} CA15 (selection)",50,0,2000));
+  Book( TH1F( "pT_s2_ly"," p_{T} CA15 (selection)",50,0,2000));
   Book( TH1F( "pT_s1_cms_tagged"," p_{T} topjets (cms tagged)",50,0,2000));
   Book( TH1F( "pT_s1_hep_tagged_ly"," p_{T} topjets (hep tagged)",50,0,2000));
    Book( TH1F( "pT_s1_hep_tagged"," p_{T} topjets (hep tagged)",50,0,2000));
+ Book( TH1F( "pT_s2_hep2_tagged_ly"," p_{T} CA15 (hep tagged)",50,0,2000));
+   Book( TH1F( "pT_s2_hep2_tagged"," p_{T} CA15 (hep tagged)",50,0,2000));
   Book( TH1F( "pT_s1_cms_tagged_ly"," p_{T} topjets (cms tagged)",50,0,2000));
    Book( TH1F( "pT_s1_arne_tagged"," p_{T} topjets (arne tagged)",50,0,2000));
   Book( TH1F( "pT_s1_arne_tagged_ly"," p_{T} topjets (arne tagged)",50,0,2000));
@@ -137,6 +144,7 @@ void TopTagcontrol::Init()
   Book( TH1F( "MVA_eff", "efficiency of MVA",200,-1,1));
   // tmva_tagger=TMVA_tagger::Instance();
   tmva_tagger=new TMVA_tagger();
+  Showerdeconstruction_tagger= new Showerdeconstruction();
   // tmva_tagger->Set_Reader("Uncorr+3");
   //  tmva_tagger->Set_Reader("NPVweight");
   //tmva_tagger->Set_Reader("bestown70");
@@ -171,10 +179,10 @@ void TopTagcontrol::Fill()
   TopFitCalc* topfit = TopFitCalc::Instance();
   //TMVA_tagger* tmva_tagger=TMVA_tagger::Instance();
   BaseCycleContainer* bcc = calc->GetBaseCycleContainer();
-  bcc->recoHyps->clear();
-  topfit->CalculateSelection(); 
-  tagchi2discr = new Chi2Discriminator();
-  tagchi2discr->FillDiscriminatorValues();
+  //  bcc->recoHyps->clear();
+  //  topfit->CalculateSelection(); 
+   tagchi2discr = new Chi2Discriminator();
+   //tagchi2discr->FillDiscriminatorValues();
   ReconstructionHypothesis *discr = tagchi2discr->GetBestHypothesis();
   LorentzVector top_lep = discr->toplep_v4();
   double chi2 = discr->discriminator("Chi2_tlep");
@@ -256,19 +264,21 @@ void TopTagcontrol::Fill()
       //selection to test efficiency
       bool jet_distance=true;
       bool selection_thad=true;
-      if(sqrt(pow(topjet.phi()-top_lep.phi(),2)+pow(topjet.eta()-top_lep.eta(),2))<2.7 ||  sqrt(pow(topjet.phi()-top_lep.phi(),2)+pow(topjet.eta()-top_lep.eta(),2))>3.5) selection_thad = false;
+      // if(sqrt(pow(topjet.phi()-top_lep.phi(),2)+pow(topjet.eta()-top_lep.eta(),2))<2.7 ||  sqrt(pow(topjet.phi()-top_lep.phi(),2)+pow(topjet.eta()-top_lep.eta(),2))>3.5) selection_thad = false;
+      if(abs(topjet.phi()-top_lep.phi())<2.1) selection_thad = false;
       if(selection_thad/*sqrt(pow(topjet.phi()-top_lep.phi(),2)+pow(topjet.eta()-top_lep.eta(),2))<2.7 ||  sqrt(pow(topjet.phi()-top_lep.phi(),2)+pow(topjet.eta()-top_lep.eta(),2))>3.5*/) {
-	for(unsigned t=0;t<bcc->jets->size();++t){
+		for(unsigned t=0;t<bcc->jets->size();++t){
 	     Jet jet = bcc->jets->at(t);
-	    if((sqrt(pow(topjet.phi()-jet.phi(),2)+pow(topjet.eta()-jet.eta(),2))>0.8 &&sqrt(pow(topjet.phi()-jet.phi(),2)+pow(topjet.eta()-jet.eta(),2))<1.8) ) jet_distance=false;
-	    if((sqrt(pow(top_lep.phi()-jet.phi(),2)+pow(top_lep.eta()-jet.eta(),2))>1 &&sqrt(pow(top_lep.phi()-jet.phi(),2)+pow(top_lep.eta()-jet.eta(),2))<2.2)) jet_distance=false;            if((sqrt(pow(top_lep.phi()-jet.phi(),2)+pow(top_lep.eta()-jet.eta(),2))>4)) jet_distance=false;
+	     if((sqrt(pow(topjet.phi()-jet.phi(),2)+pow(topjet.eta()-jet.eta(),2))>0.8 &&sqrt(pow(topjet.phi()-jet.phi(),2)+pow(topjet.eta()-jet.eta(),2))<1.8) ) jet_distance=false;
+	    if((sqrt(pow(top_lep.phi()-jet.phi(),2)+pow(top_lep.eta()-jet.eta(),2))>1 &&sqrt(pow(top_lep.phi()-jet.phi(),2)+pow(top_lep.eta()-jet.eta(),2))<2.2)) jet_distance=false;            
+	    if((sqrt(pow(top_lep.phi()-jet.phi(),2)+pow(top_lep.eta()-jet.eta(),2))>4)) jet_distance=false;
 	}
 	if(nbtags>0 && jet_distance) {
 	     Hist("pT_s1")->Fill(topjet.pt(),weight);
 	     Hist("pT_s1_ly")->Fill(topjet.pt(),weight);
 	     
        //std::cout<<mva_value<<std::endl;
-	     /* Hist("MVA")->Fill(mva_value,weight);
+	     /*  Hist("MVA")->Fill(mva_value,weight);
       Hist("MVA_ly")->Fill(mva_value,weight);
       if(topjet.pt()>350){
       Hist("MVA350")->Fill(mva_value,weight);
@@ -281,10 +291,19 @@ void TopTagcontrol::Fill()
 	Hist("pT_s1_cms_tagged")->Fill(topjet.pt(),weight);
 	Hist("pT_s1_cms_tagged_ly")->Fill(topjet.pt(),weight);
       }
-      if(HepTopTag(topjet)) {
+      /* if(HepTopTagFull(topjet,calc->GetPFParticles())) {
 	Hist("pT_s1_hep_tagged")->Fill(topjet.pt(),weight);
 	Hist("pT_s1_hep_tagged_ly")->Fill(topjet.pt(),weight);
-      }
+	}*/
+      for (unsigned int k =0; k<bcc->higgstagjets->size(); ++k){
+       TopJet CA15jet =  bcc->higgstagjets->at(k);
+       if((sqrt(pow(topjet.phi()-CA15jet.phi(),2)+pow(topjet.eta()-CA15jet.eta(),2))<1.5) && HepTopTag(CA15jet)){
+	 Hist("pT_s1_hep_tagged")->Fill(topjet.pt(),weight);
+	 Hist("pT_s1_hep_tagged_ly")->Fill(topjet.pt(),weight);
+	 }
+	
+	 }
+
       if(tmva_tagger->IsTagged("TLflat",topjet,0.71,mva_value)){
 	Hist("pT_s1_arne_tagged")->Fill(topjet.pt(),weight);
 	Hist("pT_s1_arne_tagged_ly")->Fill(topjet.pt(),weight);  
@@ -293,6 +312,14 @@ void TopTagcontrol::Fill()
 	Hist("pT_s1_tobias_tagged")->Fill(topjet.pt(),weight);
 	Hist("pT_s1_tobias_tagged_ly")->Fill(topjet.pt(),weight);  
       }
+      
+      //shower deconstruction
+      double chi_2= Showerdeconstruction_tagger->Chi(topjet);
+      double chi= Showerdeconstruction_tagger->ChiMicro(topjet);
+      Hist("SD")->Fill(log(chi),weight);
+      Hist("SD2")->Fill(log(chi_2),weight);
+      Hist("NMicrojets")->Fill(Showerdeconstruction_tagger->GetNmicrojets(topjet));
+
       Hist("MVA")->Fill(mva_value,weight);
       Hist("MVA_ly")->Fill(mva_value,weight);
       if(topjet.pt()>350){
@@ -333,8 +360,19 @@ void TopTagcontrol::Fill()
       Hist("MVA2_ly")->Fill(mva_value,weight);
      
     }
-  
-  
+  //CA15 selection
+    for (unsigned int i =0; i<bcc->higgstagjets->size(); ++i){
+      TopJet CA15jet =  bcc->higgstagjets->at(i);
+      //if(sqrt(pow(CA15jet.phi()-top_lep.phi(),2)+pow(CA15jet.eta()-top_lep.eta(),2))<2.7 ||  sqrt(pow(CA15jet.phi()-top_lep.phi(),2)+pow(CA15jet.eta()-top_lep.eta(),2))>3.5){
+      if(abs(CA15jet.phi()-top_lep.phi())>2.1){
+	Hist("pT_s2")->Fill(CA15jet.pt(),weight);
+	Hist("pT_s2_ly")->Fill(CA15jet.pt(),weight);
+	if(HepTopTag(CA15jet)) {
+	  Hist("pT_s2_hep2_tagged")->Fill(CA15jet.pt(),weight);
+	  Hist("pT_s2_hep2_tagged_ly")->Fill(CA15jet.pt(),weight);
+	} 
+      }
+      }
 
 
   sort(bcc->topjets->begin(), bcc->topjets->end(), HigherPt());
