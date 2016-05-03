@@ -11,17 +11,9 @@
 // Add the declarations of your cycles, and any other classes for which you
 // want to generate a dictionary, here. The usual format is:
 //
-// #pragma link C++ class MySuperClass+;
 
-//#pragma link C++ class TTbarSelectionCycle+;
-//#pragma link C++ class MistagCycle+;
-//#pragma link C++ class MistagPreSelectionCycle+;
 #pragma link C++ class HOTVRCycle+;
-#pragma link C++ class RocCycle+;
-	      //#pragma link C++ class TopTagTMVACycle+;
-	      //#pragma link C++ class HHTT_TMVACycle+;
-	      //#pragma link C++ class HighEffCycle++;
-	      //#pragma link C++ class newTTCycle++;
-	      //#pragma link C++ class InfraredTestCycle++;
+
+	     
 
 #endif // __CINT__

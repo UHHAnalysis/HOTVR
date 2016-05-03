@@ -33,8 +33,7 @@ extern void G__set_cpp_environmentHOTVR_Dict();
 #include "TMemberInspector.h"
 #include "include/HOTVRCycle.h"
 #include "include/HOTVRHists.h"
-#include "include/RocCycle.h"
-#include "include/RocHistsGen.h"
+#include "include/JetDisplayHists.h"
 #include <algorithm>
 namespace std { }
 using namespace std;
@@ -198,6 +197,5 @@ extern G__linked_taginfo G__HOTVR_DictLN_reverse_iteratorlEvectorlESelectionmUcO
 extern G__linked_taginfo G__HOTVR_DictLN_vectorlEBaseHistsmUcOallocatorlEBaseHistsmUgRsPgR;
 extern G__linked_taginfo G__HOTVR_DictLN_reverse_iteratorlEvectorlEBaseHistsmUcOallocatorlEBaseHistsmUgRsPgRcLcLiteratorgR;
 extern G__linked_taginfo G__HOTVR_DictLN_HOTVRCycle;
-extern G__linked_taginfo G__HOTVR_DictLN_RocCycle;
 
 /* STUB derived class for protected member access */
