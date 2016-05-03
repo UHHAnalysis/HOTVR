@@ -1,0 +1,168 @@
+// $Id: RocCycle.cxx,v 1.10 2012/12/07 14:21:51 peiffer Exp $
+
+#include <iostream>
+
+using namespace std;
+
+#include "include/RocCycle.h"
+#include "include/RocHists.h"
+#include "include/RocHists2.h"
+#include "include/RocHistsGen.h"
+#include "include/RocHists3.h"
+#include "include/RocHists3Gen.h"
+#include "include/RocHistsComb.h"
+
+#include "SFrameAnalysis/include/SelectionModules.h"
+//#include "SFrameAnalysis/include/HypothesisHists.h"
+
+ClassImp( RocCycle );
+
+RocCycle::RocCycle()
+   : AnalysisCycle() {
+
+  // constructor, declare additional variables that should be 
+  // obtained from the steering-xml file
+  
+  // set the integrated luminosity per bin for the lumi-yield control plots
+  SetIntLumiPerBin(500.);
+
+}
+
+RocCycle::~RocCycle() 
+{
+  // destructor
+}
+
+void RocCycle::BeginCycle() throw( SError ) 
+{
+  // Start of the job, general set-up and definition of 
+  // objects are done here
+
+  // Important: first call BeginCycle of base class
+  AnalysisCycle::BeginCycle();
+
+  return;
+
+}
+
+void RocCycle::EndCycle() throw( SError ) 
+{
+  // clean-up, info messages and final calculations after the analysis
+
+  
+  // call the base cycle class for all standard methods
+  AnalysisCycle::EndCycle();
+
+  return;
+
+}
+
+void RocCycle::BeginInputData( const SInputData& id ) throw( SError ) 
+{
+  // declaration of histograms and selections.
+  // AnalysisCyle expects Selections and HistCollections to be registered here.
+  // Their memory will be released in AnalysisCycle::EndInputData.
+
+  // Important: first call BeginInputData of base class
+  AnalysisCycle::BeginInputData( id );
+
+  // -------------------- set up the selections ---------------------------
+  //DO NOT use trigger selection in PROOF mode at the moment
+  //TopSel->addSelectionModule(new TriggerSelection("HLT_PFJet320_v"));
+  //TriggerSel = new Selection("TriggerSel");
+  //TriggerSel->addSelectionModule(new TriggerSelection("HLT_DiJet80Eta2p6_BTagIP3DFastPVLoose"));
+
+  // ---------------- set up the histogram collections --------------------
+    RegisterHistCollection( new RocHistsGen("NoCutsHistosGen_mass",0,1000,0,1000,0,100,0,1.0,0,0));
+    /* RegisterHistCollection( new RocHistsGen("NoCutsHistosGen_mmin",140,220,0,1000,2,100,0,0.8,20,20));
+  RegisterHistCollection( new RocHistsGen("NoCutsHistosGen_nsubjets",140,220,50,1000,0,1000,0,0.8,20,20));
+  RegisterHistCollection( new RocHistsGen("NoCutsHistosGen_ptfraction",140,220,50,1000,2,100,0,1.0,20,20));
+  */
+ // RegisterHistCollection( new RocHists2("NoCutsHistos2"));
+ RegisterHistCollection( new RocHists2("NoCutsHistos2"));
+  RegisterHistCollection( new RocHists3("NoCutsHistos3"));
+   RegisterHistCollection( new RocHists3Gen("NoCutsHistos3Gen"));
+  RegisterHistCollection( new RocHistsComb("NoCutsHistosComb"));
+  RegisterHistCollection( new SubstructureHists("before_cms_Tag_pt400"));
+  RegisterHistCollection( new SubstructureHists("after_cms_Tag_pt400"));
+  RegisterHistCollection( new SubstructureHists("before_cms_Tag_pt600"));
+  RegisterHistCollection( new SubstructureHists("after_cms_Tag_pt600"));
+  RegisterHistCollection( new SubstructureHists("before_cms_Tag_pt800"));
+  RegisterHistCollection( new SubstructureHists("after_cms_Tag_pt800"));
+
+
+
+  // important: initialise histogram collections after their definition
+  InitHistos();
+
+}
+
+void RocCycle::EndInputData( const SInputData& id ) throw( SError ) 
+{
+  AnalysisCycle::EndInputData( id );
+}
+
+void RocCycle::BeginInputFile( const SInputData& id ) throw( SError ) 
+{
+  // Connect all variables from the Ntuple file with the ones needed for the analysis
+  // The variables are commonly stored in the BaseCycleContaincer
+  // important: call to base function to connect all variables to Ntuples from the input tree
+  AnalysisCycle::BeginInputFile( id );
+}
+
+void RocCycle::ExecuteEvent( const SInputData& id, Double_t weight) throw( SError ) 
+{
+  // this is the most important part: here the full analysis happens
+  // user should implement selections, filling of histograms and results
+
+  // first step: call Execute event of base class to perform basic consistency checks
+  // also, the good-run selection is performed there and the calculator is reset
+  AnalysisCycle::ExecuteEvent( id, weight );
+
+  // get the histogram collections. NOTE: this could be done more performant by making
+  // all thse BaseHists* vairables private member variables of RocCycle and
+  // setting them in BeginInputData. Then, there is no need here to call GetHistColletion ...
+
+  BaseHists* NoCutsHistosGen_mass = GetHistCollection("NoCutsHistosGen_mass");
+ // BaseHists* NoCutsHistosGen_mmin = GetHistCollection("NoCutsHistosGen_mmin");
+  // BaseHists* NoCutsHistosGen_nsubjets = GetHistCollection("NoCutsHistosGen_nsubjets");
+  // BaseHists* NoCutsHistosGen_ptfraction = GetHistCollection("NoCutsHistosGen_ptfraction");
+ BaseHists* NoCutsHistos = GetHistCollection("NoCutsHistos2");
+  BaseHists* NoCutsHistos3 = GetHistCollection("NoCutsHistos3");
+   BaseHists* NoCutsHistos3Gen = GetHistCollection("NoCutsHistos3Gen");
+  BaseHists* NoCutsHistosComb = GetHistCollection("NoCutsHistosComb");
+  BaseHists* cms400 = GetHistCollection("before_cms_Tag_pt400");
+  BaseHists* cms400tag = GetHistCollection("after_cms_Tag_pt400");
+  BaseHists* cms600 = GetHistCollection("before_cms_Tag_pt600");
+  BaseHists* cms600tag = GetHistCollection("after_cms_Tag_pt600");
+  BaseHists* cms800 = GetHistCollection("before_cms_Tag_pt800");
+  BaseHists* cms800tag = GetHistCollection("after_cms_Tag_pt800");
+
+  EventCalc* calc = EventCalc::Instance();
+  BaseCycleContainer* bcc = calc->GetBaseCycleContainer();
+  bool IsRealData = calc->IsRealData();
+  ((RocHists*)NoCutsHistos)->SetIdVersion(id.GetVersion());
+  ((RocHists*)NoCutsHistos3)->SetIdVersion(id.GetVersion());
+  //((RocHists*)NoCutsHistosComb)->SetIdVersion(id.GetVersion());
+  //  std::cout<<id.GetVersion()<<std::endl;
+   ((RocHistsGen*)NoCutsHistosGen_mass)->SetIdVersion(id.GetVersion());
+  //((RocHistsGen*)NoCutsHistosGen_mmin)->SetIdVersion(id.GetVersion());
+  //((RocHistsGen*)NoCutsHistosGen_nsubjets)->SetIdVersion(id.GetVersion());
+  //((RocHistsGen*)NoCutsHistosGen_ptfraction)->SetIdVersion(id.GetVersion());
+   // ((RocHists*)NoCutsHistos3Gen)->SetIdVersion(id.GetVersion());
+   //  NoCutsHistos->Fill();
+   //  NoCutsHistos3->Fill();
+  // NoCutsHistosComb->Fill();
+      NoCutsHistosGen_mass->Fill();
+   //   NoCutsHistosGen_mmin->Fill();
+   //  NoCutsHistosGen_nsubjets->Fill();
+   //  NoCutsHistosGen_ptfraction->Fill();
+   // NoCutsHistos3Gen->Fill();
+
+   
+  
+  return;
+  
+}
+
+

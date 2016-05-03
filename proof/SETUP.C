@@ -15,7 +15,7 @@ int SETUP() {
    if( gSystem->Load( "libNtuple" ) == -1 ) return -1;
    if( gSystem->Load( "libSFrameTools" ) == -1 ) return -1;
    if( gSystem->Load( "libAnalysis" ) == -1 ) return -1;
-   if( gSystem->Load( "libMyAnalysis" ) == -1 ) return -1;
+   if( gSystem->Load( "libHOTVR" ) == -1 ) return -1;
  
    return 0;
 }

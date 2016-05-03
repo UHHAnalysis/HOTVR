@@ -1,0 +1,80 @@
+! File: main32.cmnd
+! This file contains commands to be read in for a Pythia8 run. 
+! Lines not beginning with a letter or digit are comments.
+! Names are case-insensitive  -  but spellings-sensitive!
+! The changes here are illustrative, not always physics-motivated.
+
+! 1) Settings that will be used in a main program.
+Main:numberOfEvents = 100       ! number of events to generate
+Main:timesToShow = 10              ! show how far along run is this many times
+Main:timesAllowErrors = 100         ! abort run after this many flawed events
+Main:showChangedSettings = on      ! print changed flags/modes/parameters
+Main:showAllSettings = on          ! print all flags/modes/parameters
+Main:showChangedParticleData = on  ! print changed particle and decay data
+Main:showAllParticleData = on      ! print all particle and decay data
+
+! 2) Beam parameter settings. Values below agree with default ones.
+Beams:idA = 2212                   ! first beam, p = 2212, pbar = -2212
+Beams:idB = 2212                   ! second beam, p = 2212, pbar = -2212
+Beams:eCM = 14000.                 ! CM energy of collision
+
+!folgendes ist pp->H + Z
+!HiggsSM:ffbar2HZ = on
+NewGaugeBoson:ffbar2gmZZprime = on
+
+Zprime:gmZmode = 3
+! same couplings for 1-3 generation:
+Zprime:universality = on
+
+!couplings of Zprime:
+#Zprime:vd = -1.0
+#Zprime:ad = -1.0
+#Zprime:vu =  1.0
+#Zprime:au =  1.0
+
+!vector coupling of t quark:
+Zprime:vt = 2.0
+Zprime:vu = 2.0
+Zprime:vd = 2.0
+Zprime:vs = 2.0
+Zprime:vc = 2.0
+
+
+! force Z' decay to tops:
+32:onMode = off
+32:onIfAny = 6
+! Zprime mass:
+32:m0=1500
+
+
+24:onMode = off
+24:onIfAny = 1 2 3 4 5 
+
+! set minimum pt of hard process (Higgs or Z):
+! Fuer gg->H sollte das natuerlich 0 sein... fuer Z Prozesse kann man
+! pt>150 nehmen
+!PhaseSpace:pTHatMin = 150.           ! minimum pT of hard process
+
+! 3.1) Switch off ISR, FSR, UE (multiple interactions)
+PartonLevel:all = on
+PartonLevel:FSR = on
+PartonLevel:ISR = on
+PartonLevel:MI = on
+
+! Own cross section -- should be fixed by MCFM
+#SigmaTotal:setOwn = on             ! set your own total/elastic/diffractive sigma
+#SigmaTotal:sigmaTot = 3.8         ! total cross section (excluding Coulomb)
+
+!3.3) keep b meson stable:
+!ParticleDecays:limitTau0 = off
+!ParticleDecays:tau0Max = 0.3
+
+!3.4) use specific random seed
+Random:setSeed = on
+Random:seed = 1
+
+! 4) Alternative beam and process selection from a Les Houches Event File.
+! NOTE: to use this option, comment out the lines in section 3 above
+! and uncomment the ones below. Section 2 is ignored for frameType = 4.
+#Beams:frameType = 4                 ! read info from a LHEF
+#Beams:LHEF = ttbar.lhe              ! the LHEF to read from

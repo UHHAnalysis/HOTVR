@@ -1,0 +1,26 @@
+Shower Deconstruction
+==============================
+
+To compile this, execute:
+
+./configure --with-fastjet=[Fastjet directory]
+
+(substituting [Fastjet directory] with the appropriate path for where Fastjet is installed)
+
+The actual code can be compiled with:
+
+make
+
+The libraries will be in the .libs directory.
+To link this to your code, use the flags -L[THISDIRECTORY]/.libs -lDeconstruction and rememver to add this directory to your include path.
+
+There is an example code that generates Z prime particles decaying into hadronic tops, makes a C/A R=1.0 jet, takes the leading jet, makes
+sub-jets from its constituents with kt R=0.2 and feeds the leading 9 sub-jets to SD.
+It can be compiled by adjusting the HepMC, Pythia 8, Fastjet and ROOT paths in compile_test.sh and running:
+source compile_test.sh
+
+Execute with ./TestAnalysis --help to see your options.
+
+One can also include --prefix=[dir] in configure and then call make install to install the libraries generated in the
+directory to be used in an outside analysis.
+
