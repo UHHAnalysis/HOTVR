@@ -4,6 +4,8 @@
 #define HOTVRCycle_H
 
 #include "SFrameAnalysis/include/AnalysisCycle.h"
+#include "include/Matching.h"
+#include "include/Clustering.h"
 //#include "ZprimeFullHadTools.h"
 //#include "include/SubstructureHists.h"
 
@@ -46,7 +48,8 @@ private:
   //
   // Put all your private variables here
   //
-  
+   Matching* matching;
+   Clustering* clustering;
    //Selection *TriggerSel;//* BSel, * NoBSel, *TopSel, *chi2_selection;
 
   // Macro adding the functions for dictionary generation

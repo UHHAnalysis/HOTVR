@@ -9,20 +9,25 @@
 
 // Local include(s):
 #include "SFrameTools/include/BaseHists.h"
-
-
+#include "include/Matching.h"
+#include "include/Clustering.h"
+ #include "fastjet/PseudoJet.hh"
 class HOTVRHists : public BaseHists {
 
 public:
    /// Named constructor
-  HOTVRHists(const char* name, double mass_min, double mass_max, double mmin_min, double mmin_max, int Nsubjets_min, int Nsubjets_max, double ptfraction_min, double ptfraction_max, double subjet1pt, double subjet2pt);
+  HOTVRHists(const char* name);
 
    /// Default destructor
    ~HOTVRHists();
 
    void Init();
-
-   void Fill();
+   void Fill(){};
+   
+   void Fill(fastjet::PseudoJet jet,double jet_radius, fastjet::PseudoJet matched_jet, double weight);
+   void Fill_nominator(fastjet::PseudoJet jet, double jet_radius, fastjet::PseudoJet matched_jet, double weight);
+    void Fill_denominator(fastjet::PseudoJet matched_jet, double weight);
+   
 
    void Finish();
    
@@ -42,7 +47,8 @@ private:
 
 
    TString idVersion;
- 
+   Matching* matching;
+   Clustering* clustering;
 }; // class HOTVRHists
 
 

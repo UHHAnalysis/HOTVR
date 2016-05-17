@@ -30,16 +30,16 @@
 	<Package Name="Analysis.par" />
 	<Package Name="HOTVR.par" />
 	
-<!--<Cycle Name="HOTVRCycle" OutputDirectory="/nfs/dust/cms/user/tlapsien/hhtt_paper/" PostFix="_ptcut20" TargetLumi="19708" >-->
-
-<Cycle Name="HOTVRCycle"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/tlapsien/PROOF/" OutputDirectory="/nfs/dust/cms/user/tlapsien/hhtt_paper/" PostFix="_ptcut20_test7" TargetLumi="19708" >
-
+<Cycle Name="HOTVRCycle" OutputDirectory="/nfs/dust/cms/user/tlapsien/hhtt_paper/" PostFix="_ptcut20" TargetLumi="19708" >
 <!--
+<Cycle Name="HOTVRCycle"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/tlapsien/PROOF/" OutputDirectory="/nfs/dust/cms/user/tlapsien/hhtt_paper/" PostFix="_ptcut20_test" TargetLumi="19708" >
+-->
+
 <InputData Lumi="1.0" NEventsMax="30000" Type="MC" Version="TTbarEff_gen" Cacheable="True">
 &TTbargenerator_flat;
 <InputTree Name="AnalysisTree" />
 </InputData>
--->
+
 
 <InputData Lumi="1.0" NEventsMax="30000" Type="MC" Version="QCD_gen" Cacheable="True">
 &QCDgenerator_flat;
