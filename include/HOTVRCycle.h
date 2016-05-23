@@ -6,6 +6,7 @@
 #include "SFrameAnalysis/include/AnalysisCycle.h"
 #include "include/Matching.h"
 #include "include/Clustering.h"
+#include "include/TopTagger.h"
 //#include "ZprimeFullHadTools.h"
 //#include "include/SubstructureHists.h"
 
@@ -50,6 +51,7 @@ private:
   //
    Matching* matching;
    Clustering* clustering;
+  TopTagger* toptagger;
    //Selection *TriggerSel;//* BSel, * NoBSel, *TopSel, *chi2_selection;
 
   // Macro adding the functions for dictionary generation

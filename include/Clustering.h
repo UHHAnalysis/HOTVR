@@ -24,8 +24,9 @@ class Clustering{
  private:
   static  Clustering* m_instance;
   mutable SLogger m_logger;
-
-
+  fastjet::ClusterSequence* _clust_seq2;
+  std::vector<fastjet::PseudoJet> _fatjets;
+ 
  public:
  enum E_algorithm { 
     e_ca, 
@@ -38,13 +39,13 @@ class Clustering{
     e_massjump_akt,
     e_massjump_kt,
    };
-
+ E_algorithm m_test;
 
 Clustering();
   ~Clustering();
  static Clustering* Instance();
-
- 
+ void Reset();
+  
 
  //usual squentiell clustering
   std::vector<fastjet::PseudoJet> get_clustered_jets(std::vector<fastjet::PseudoJet> particles,enum Clustering::E_algorithm algorithm, double jet_radius, double ptmin);
@@ -52,8 +53,7 @@ Clustering();
   std::vector<fastjet::PseudoJet> get_clustered_jets(std::vector<fastjet::PseudoJet> particles,enum  Clustering::E_algorithm algorithm, double ptmin, double rho, double min_r, double max_r);
   //  std::vector<fastjet::PseudoJet> get_clustered_jets(std::vector<fastjet::PseudoJet> particles,enum  Clustering::E_algorithm algorithm, double jet_radius,double ptmin, double rho, double min_r, double max_r);
   std::vector<fastjet::PseudoJet> get_clustered_hotvr_jets(std::vector<fastjet::PseudoJet> particles,enum  Clustering::E_algorithm algorithm, double ptmin, double rho, double min_r, double max_r, double mu, double theta, double pt_cut);
- private:
-  E_algorithm m_test;
+
 };
 
 #endif

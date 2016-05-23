@@ -1,3 +1,4 @@
+
 #include "include/Clustering.h"
 //#include "NtupleWriter/include/JetProps.h"
 //#include "NtupleWriter/interface/GenJetProps.h"
@@ -46,7 +47,7 @@ Clustering::Clustering() : m_logger("Clustering")
 Clustering::~Clustering()
 {
   // default destructor
-  
+  // if(_fatjets.size()!=0) delete _fatjets.at(0).associated_cluster_sequence();
 }
 
 
@@ -55,13 +56,21 @@ std::vector<fastjet::PseudoJet> Clustering::get_clustered_jets(std::vector<fastj
 {
   if(algorithm==e_akt || algorithm==e_ca || algorithm==e_kt){
     //  IR_Saftey->add_grid(genvector,100,100); 
-      fastjet::JetDefinition jet_def(fastjet::antikt_algorithm,jet_radius);
-      std::vector<fastjet::PseudoJet> fatjets;
-      if(algorithm==e_ca)jet_def.set_jet_algorithm(fastjet::cambridge_algorithm);
+    fastjet::JetDefinition *jetdef;//(fastjet::antikt_algorithm,jet_radius);
+    std::vector<fastjet::PseudoJet> fatjets;
+    /* if(algorithm==e_ca)jet_def.set_jet_algorithm(fastjet::cambridge_algorithm);
       if(algorithm==e_akt)jet_def.set_jet_algorithm(fastjet::antikt_algorithm);
-      if(algorithm==e_kt)jet_def.set_jet_algorithm(fastjet::kt_algorithm);
-      fastjet::ClusterSequence* clust_seq=new fastjet::ClusterSequence(particles, jet_def);
-      fatjets = sorted_by_pt(clust_seq->inclusive_jets(ptmin));
+      if(algorithm==e_kt)jet_def.set_jet_algorithm(fastjet::kt_algorithm);*/
+      if(algorithm==e_ca) jetdef= new fastjet::JetDefinition(fastjet::cambridge_algorithm,jet_radius);
+      if(algorithm==e_akt)jetdef= new fastjet::JetDefinition(fastjet::antikt_algorithm,jet_radius);
+      if(algorithm==e_kt)jetdef= new fastjet::JetDefinition(fastjet::cambridge_algorithm,jet_radius);
+     
+      _clust_seq2=new fastjet::ClusterSequence(particles, *jetdef);
+    
+      fatjets = sorted_by_pt(_clust_seq2->inclusive_jets(ptmin));
+      _fatjets=fatjets;
+
+      delete jetdef;
       return fatjets;
   }
 }
@@ -84,7 +93,7 @@ std::vector<fastjet::PseudoJet> Clustering::get_clustered_hotvr_jets(std::vector
 {
  HOTVR plugin_hotvr(mu, theta,min_r, max_r,rho,pt_cut, HOTVR::CALIKE);//call HOTVR algorithm
     fastjet::JetDefinition jet_def(&plugin_hotvr);
-    fastjet::ClusterSequence* clust_seq=new fastjet::ClusterSequence(particles, jet_def);
+    _clust_seq2=new fastjet::ClusterSequence(particles, jet_def);
     
     
     std::vector<fastjet::PseudoJet> hotvr_jets,rejected_jets,soft_jets ; //vector of hotvr_jets, jets that were rejcted durning the clustering procedure and soft jets
@@ -117,3 +126,10 @@ std::vector<fastjet::PseudoJet> Clustering::get_clustered_jets(std::vector<fastj
     ClusteringVetoPlugin pluginAKT(mu, theta, max_r, ClusteringVetoPlugin::AKTLIKE);
      fastjet::JetDefinition jet_defCA(&pluginAKT);
      jet_defCA2=jet_defCA;*/
+
+void Clustering::Reset()
+{
+  delete _clust_seq2;
+  // delete _fatjets;
+  
+}

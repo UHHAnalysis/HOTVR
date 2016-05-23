@@ -47,7 +47,7 @@ Matching::Matching() : m_logger("Matching")
 Matching::~Matching()
 {
   // default destructor
-  std::cout<<"destructor called"<<std::endl;
+ 
   delete m_instance;
 }
 
@@ -193,13 +193,13 @@ void Matching::UpdateSkipList(GenParticle* top, std::vector<GenParticle>* genpar
 }
 
 std::vector<fastjet::PseudoJet> Matching::get_parton_jets(std::vector<fastjet::PseudoJet> parts){
-  std::cout<<"cluster"<<std::endl;
+ 
   fastjet::JetDefinition jet_def(fastjet::antikt_algorithm,0.4);
   std::vector<fastjet::PseudoJet> fatjets;
-  fastjet::ClusterSequence*  clust_seq;
-  clust_seq= new fastjet::ClusterSequence(parts, jet_def);
+  _clust_seq=new fastjet::ClusterSequence(parts, jet_def);
+  // clust_seq= new fastjet::ClusterSequence(parts, jet_def);
   // _clust_seq=new fastjet::ClusterSequence(parts, jet_def);
-  fatjets = sorted_by_pt(clust_seq->inclusive_jets(100.));
+  fatjets = sorted_by_pt(_clust_seq->inclusive_jets(100.));
   //delete  clust_seq;
   return fatjets;
 }
@@ -216,6 +216,7 @@ std::vector<fastjet::PseudoJet> Matching::get_denominator_jets(TString idVersion
       }
     }
   }
+   delete _clust_seq;
    return denominator_jets;
 }
 
@@ -231,7 +232,8 @@ for(int i=0;i<jets.size();i++){
       matched_jet=jets[i];
     }
  }
- return matched_jet;
+
+  return matched_jet;
 
 }
 
@@ -243,6 +245,22 @@ bool Matching::IsMatched(fastjet::PseudoJet jet, double matching_radius,fastjet:
   if(deltaR<matching_radius) return true;
   else return false;
 
+}
+
+bool Matching::IsHadronic(GenParticle* p, std::vector<GenParticle>* genparticles){
+  GenParticle* d1 = GetDaughter(p, genparticles, 1);
+  GenParticle* d2 = GetDaughter(p, genparticles, 2);
+  GenParticle* d;
+  if(abs(d1->pdgId())==24) d=d1;
+  else d=d2;
+  while(abs(d->pdgId())==24){
+    d1= GetDaughter(d, genparticles, 1);
+    d2 = GetDaughter(d, genparticles, 2);
+    if(abs(d1->pdgId())==24) d=d1;
+    else d=d2;
+  }
+  if(abs(d->pdgId())<6) return true;
+  else return false;
 }
 
 
@@ -261,7 +279,7 @@ void Matching::Run_matching(std::vector<GenParticle>* genparticles){
       GenParticle* part = &(genparticles->at(i));
            // store stable hadrons
 	if (IsStableHadron(part)){
-	  _hadrons.push_back(convert_particle(part));
+	   _hadrons.push_back(convert_particle(part));
 	  continue;
 	}
 	
@@ -331,14 +349,14 @@ void Matching::Run_matching(std::vector<GenParticle>* genparticles){
        continue;
 
      }
-
+   
    std::vector<fastjet::PseudoJet> partons_to_cluster;
    LorentzVector s(0,0,0,0);
 
    for(int i;i<partons.size();i++){
      GenParticle* p = partons[i];
      fastjet::PseudoJet particle=convert_particle(p);
-     if(std::abs(partons[i]->pdgId())==6) particle.set_user_index(6);
+     if(std::abs(partons[i]->pdgId())==6 && IsHadronic(partons[i],genparticles)) particle.set_user_index(6);
      else  particle.set_user_index(0);
      partons_to_cluster.push_back(particle); 
      //std::cout<<"partons to cluster "<<p->pdgId()<<std::endl;
@@ -348,8 +366,8 @@ void Matching::Run_matching(std::vector<GenParticle>* genparticles){
   
 
 
-    _parton_jets=get_parton_jets(partons_to_cluster);
-    
+   _parton_jets=get_parton_jets(partons_to_cluster);
+   
        
     //cout << "s: px = " << s.px() << " py = " << s.py() << " pz = " << s.pz() << " E = " << s.E() << endl;
 

@@ -30,18 +30,18 @@
 	<Package Name="Analysis.par" />
 	<Package Name="HOTVR.par" />
 	
-<Cycle Name="HOTVRCycle" OutputDirectory="/nfs/dust/cms/user/tlapsien/hhtt_paper/" PostFix="_ptcut20" TargetLumi="19708" >
-<!--
-<Cycle Name="HOTVRCycle"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/tlapsien/PROOF/" OutputDirectory="/nfs/dust/cms/user/tlapsien/hhtt_paper/" PostFix="_ptcut20_test" TargetLumi="19708" >
--->
+<!--<Cycle Name="HOTVRCycle" OutputDirectory="/nfs/dust/cms/user/tlapsien/hhtt_paper/" PostFix="_test" TargetLumi="19708" >-->
 
-<InputData Lumi="1.0" NEventsMax="30000" Type="MC" Version="TTbarEff_gen" Cacheable="True">
+<Cycle Name="HOTVRCycle"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/tlapsien/PROOF/" OutputDirectory="/nfs/dust/cms/user/tlapsien/hhtt_paper/" PostFix="_ptcut30_hotvr_kinematics" TargetLumi="19708" >
+
+<!--
+<InputData Lumi="1.0" NEventsMax="-1" Type="MC" Version="TTbarEff_gen" Cacheable="True">
 &TTbargenerator_flat;
 <InputTree Name="AnalysisTree" />
 </InputData>
+-->
 
-
-<InputData Lumi="1.0" NEventsMax="30000" Type="MC" Version="QCD_gen" Cacheable="True">
+<InputData Lumi="1.0" NEventsMax="1000000" Type="MC" Version="QCD_gen" Cacheable="True">
 &QCDgenerator_flat;
 <InputTree Name="AnalysisTree" />
 </InputData>
@@ -51,8 +51,8 @@
 
 		<UserConfig>
 		  <Item Name="readCommonInfo" Value="False" />
-
-		   <Item Name="GenParticleCollection" Value="GenParticles" /> 
+		  <Item Name="Tagger" Value="HOTVR" />
+		  <Item Name="GenParticleCollection" Value="GenParticles" /> 
 
 		      
                 </UserConfig>

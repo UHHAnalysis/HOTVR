@@ -11,9 +11,8 @@
 // Add the declarations of your cycles, and any other classes for which you
 // want to generate a dictionary, here. The usual format is:
 //
-
 #pragma link C++ class HOTVRCycle+;
-
+#pragma link C++ class JetDisplayCycle+;
 	     
 
 #endif // __CINT__

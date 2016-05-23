@@ -1,5 +1,5 @@
 #include <time.h>
-#include "include/RocHistsGen.h"
+#include "include/HOTVRHists.h"
 #include "SFrameTools/include/EventCalc.h"
 //#include "include/ZprimeFullHadTools.h"
 #include "NtupleWriter/include/JetProps.h"
@@ -16,7 +16,7 @@
 using namespace std;
 using namespace fastjet;
 using namespace contrib;
-RocHistsGen::RocHistsGen(const char* name, double mass_min, double mass_max, double mmin_min, double mmin_max, int Nsubjets_min, int Nsubjets_max, double ptfraction_min, double ptfraction_max, double subjet1pt, double subjet2pt) : BaseHists(name)
+HOTVRHists::HOTVRHists(const char* name, double mass_min, double mass_max, double mmin_min, double mmin_max, int Nsubjets_min, int Nsubjets_max, double ptfraction_min, double ptfraction_max, double subjet1pt, double subjet2pt) : BaseHists(name)
 {
   //  std::cout<<name<<std::endl;
  m_mass_min=mass_min;
@@ -33,12 +33,12 @@ RocHistsGen::RocHistsGen(const char* name, double mass_min, double mass_max, dou
    
 }
 
-RocHistsGen::~RocHistsGen()
+HOTVRHists::~HOTVRHists()
 {
   // default destructor, does nothing
 }
 
-void RocHistsGen::Init()
+void HOTVRHists::Init()
 {
   // book all histograms here
 
@@ -225,14 +225,16 @@ void RocHistsGen::Init()
   Book(TH1D("ptfraction1_800","p_{T,sub1}/p_{T,jet} [GeV]",20,0,1));
   Book(TH1D("ptfraction1_1000","p_{T,sub1}/p_{T,jet} [GeV]",20,0,1));
   
+  matching= new Matching();
+
 }
 
-void RocHistsGen::SetIdVersion(TString s)
+void HOTVRHists::SetIdVersion(TString s)
 {
   idVersion=s;
 }
 
-void RocHistsGen::Fill()
+void HOTVRHists::Fill()
 {
 
   double rho(600.);
@@ -534,7 +536,8 @@ void RocHistsGen::Fill()
 
   if(!IsRealData && (idVersion.Contains("QCD15to3000") ||idVersion.Contains("QCD")) )
   {
-    
+    bool bla;
+   
     std::vector<GenParticle>* genparticles = calc->GetGenParticles();
     std::vector<fastjet::PseudoJet> genvector;
     //Fill gen particles for clustering
@@ -604,10 +607,10 @@ void RocHistsGen::Fill()
     
  
       if(bestjetindex>-1 ) if(hotvr_jets[i].user_info<HOTVRinfo>().radius()==0)  bestjetindex=-1;//is jet radius=0? Pass not matching
-  
-      
+      fastjet::PseudoJet matched_jet;
+        
       //jet matched to generator parton? proceed
-      if (bestjetindex>-1)
+      if (matching->IsMatched(hotvr_jets[i],hotvr_jets[i].user_info<HOTVRinfo>().radius(),matched_jet))
 	{
 
 	  std::vector<fastjet::PseudoJet> SortedSubJets=sorted_by_pt(hotvr_jets[i].user_info<HOTVRinfo>().subjets());//Get subjets of hotvr jets
@@ -647,18 +650,19 @@ void RocHistsGen::Fill()
 
       
 	 //Fill number of subjets
-	 if(genparticles->at(bestjetindex).pt()>200 && genparticles->at(bestjetindex).pt()<400)  Hist("nsubjets_massjump200")->Fill(SortedSubJets.size(),weight);
-	 if(genparticles->at(bestjetindex).pt()>500 && genparticles->at(bestjetindex).pt()<600)  Hist("nsubjets_massjump400")->Fill(SortedSubJets.size(),weight);
-	 if(genparticles->at(bestjetindex).pt()>600 && genparticles->at(bestjetindex).pt()<800)  Hist("nsubjets_massjump600")->Fill(SortedSubJets.size(),weight);
-	 if(genparticles->at(bestjetindex).pt()>800 && genparticles->at(bestjetindex).pt()<1000)  Hist("nsubjets_massjump800")->Fill(SortedSubJets.size(),weight);
-	 if(genparticles->at(bestjetindex).pt()>1000 && genparticles->at(bestjetindex).pt()<1200)  Hist("nsubjets_massjump1000")->Fill(SortedSubJets.size(),weight);
+	 if(matched_jet.pt()>200 && matched_jet.pt()<400)  Hist("nsubjets_massjump200")->Fill(SortedSubJets.size(),weight);
+	 if(matched_jet.pt()>500 && matched_jet.pt()<600)  Hist("nsubjets_massjump400")->Fill(SortedSubJets.size(),weight);
+	 if(matched_jet.pt()>600 && matched_jet.pt()<800)  Hist("nsubjets_massjump600")->Fill(SortedSubJets.size(),weight);
+	 if(matched_jet.pt()>800 && matched_jet.pt()<1000)  Hist("nsubjets_massjump800")->Fill(SortedSubJets.size(),weight);
+	 if(matched_jet.pt()>1000 && matched_jet.pt()<1200)  Hist("nsubjets_massjump1000")->Fill(SortedSubJets.size(),weight);
+
      
 	 //Fill mmin
-	 if(genparticles->at(bestjetindex).pt()>200 && genparticles->at(bestjetindex).pt()<400)  Hist("massjump_mmin200")->Fill(mmin,weight);
-	 if(genparticles->at(bestjetindex).pt()>400 && genparticles->at(bestjetindex).pt()<600)  Hist("massjump_mmin400")->Fill(mmin,weight);
-	 if(genparticles->at(bestjetindex).pt()>600 && genparticles->at(bestjetindex).pt()<800)  Hist("massjump_mmin600")->Fill(mmin,weight);
-	 if(genparticles->at(bestjetindex).pt()>800 && genparticles->at(bestjetindex).pt()<1000)  Hist("massjump_mmin800")->Fill(mmin,weight);
-	 if(genparticles->at(bestjetindex).pt()>1000 && genparticles->at(bestjetindex).pt()<1200)  Hist("massjump_mmin1000")->Fill(mmin,weight);
+	 if(matched_jet.pt()>200 && matched_jet.pt()<400)  Hist("massjump_mmin200")->Fill(mmin,weight);
+	 if(matched_jet.pt()>400 && matched_jet.pt()<600)  Hist("massjump_mmin400")->Fill(mmin,weight);
+	 if(matched_jet.pt()>600 && matched_jet.pt()<800)  Hist("massjump_mmin600")->Fill(mmin,weight);
+	 if(matched_jet.pt()>800 && matched_jet.pt()<1000)  Hist("massjump_mmin800")->Fill(mmin,weight);
+	 if(matched_jet.pt()>1000 && matched_jet.pt()<1200)  Hist("massjump_mmin1000")->Fill(mmin,weight);
 	 
 	 //Fill subjet pT
 	 for (unsigned int bk =0; bk<=3; ++bk)
@@ -682,29 +686,30 @@ void RocHistsGen::Fill()
 
 	       }
 	   }
-
+	 
 	 //Fill jet mass
 	 double mjet;
 	 mjet=hotvr_jets[i].m();
-	 if(genparticles->at(bestjetindex).pt()>200 && genparticles->at(bestjetindex).pt()<400)  Hist("mjet200")->Fill(mjet,weight);
-	 if(genparticles->at(bestjetindex).pt()>400 && genparticles->at(bestjetindex).pt()<600)  Hist("mjet400")->Fill(mjet,weight);
-	 if(genparticles->at(bestjetindex).pt()>600 && genparticles->at(bestjetindex).pt()<800)  Hist("mjet600")->Fill(mjet,weight);
-	 if(genparticles->at(bestjetindex).pt()>800 && genparticles->at(bestjetindex).pt()<1000)  Hist("mjet800")->Fill(mjet,weight);
-	 if(genparticles->at(bestjetindex).pt()>1000 && genparticles->at(bestjetindex).pt()<1200)  Hist("mjet1000")->Fill(mjet,weight);
+	 if(matched_jet.pt()>200 && matched_jet.pt()<400)  Hist("mjet200")->Fill(mjet,weight);
+	 if(matched_jet.pt()>400 && matched_jet.pt()<600)  Hist("mjet400")->Fill(mjet,weight);
+	 if(matched_jet.pt()>600 && matched_jet.pt()<800)  Hist("mjet600")->Fill(mjet,weight);
+	 if(matched_jet.pt()>800 && matched_jet.pt()<1000)  Hist("mjet800")->Fill(mjet,weight);
+	 if(matched_jet.pt()>1000 && matched_jet.pt()<1200)  Hist("mjet1000")->Fill(mjet,weight);
 
 
+	 
 	 //Fill pT fraction
-	 if(genparticles->at(bestjetindex).pt()>200 && genparticles->at(bestjetindex).pt()<400)	Hist("ptfraction1_200")->Fill( SortedSubJets.at(0).pt()/hotvr_jets[i].pt(),weight);
-	 if(genparticles->at(bestjetindex).pt()>400 && genparticles->at(bestjetindex).pt()<600)	Hist("ptfraction1_400")->Fill( SortedSubJets.at(0).pt()/hotvr_jets[i].pt(),weight);
-	 if(genparticles->at(bestjetindex).pt()>600 && genparticles->at(bestjetindex).pt()<800)	Hist("ptfraction1_600")->Fill( SortedSubJets.at(0).pt()/hotvr_jets[i].pt(),weight);
-	 if(genparticles->at(bestjetindex).pt()>800 && genparticles->at(bestjetindex).pt()<1000)	Hist("ptfraction1_800")->Fill( SortedSubJets.at(0).pt()/hotvr_jets[i].pt(),weight);
-	 if(genparticles->at(bestjetindex).pt()>1000 && genparticles->at(bestjetindex).pt()<1200)	Hist("ptfraction1_1000")->Fill( SortedSubJets.at(0).pt()/hotvr_jets[i].pt(),weight);
-
+	 if(matched_jet.pt()>200 && matched_jet.pt()<400)	Hist("ptfraction1_200")->Fill( SortedSubJets.at(0).pt()/hotvr_jets[i].pt(),weight);
+	 if(matched_jet.pt()>400 && matched_jet.pt()<600)	Hist("ptfraction1_400")->Fill( SortedSubJets.at(0).pt()/hotvr_jets[i].pt(),weight);
+	 if(matched_jet.pt()>600 && matched_jet.pt()<800)	Hist("ptfraction1_600")->Fill( SortedSubJets.at(0).pt()/hotvr_jets[i].pt(),weight);
+	 if(matched_jet.pt()>800 && matched_jet.pt()<1000)	Hist("ptfraction1_800")->Fill( SortedSubJets.at(0).pt()/hotvr_jets[i].pt(),weight);
+	 if(matched_jet.pt()>1000 && matched_jet.pt()<1200)	Hist("ptfraction1_1000")->Fill( SortedSubJets.at(0).pt()/hotvr_jets[i].pt(),weight);
+	 
 	 //Fill nominator hists
 	 if(SortedSubJets.size()>2)  Hist("pT_s1_hotvr_tagged")->Fill(genparticles->at(bestjetindex).pt(),weight);
 	 if(hotvr_jets[i].m()>mtopLow &&  hotvr_jets[i].m()<mtopHigh)  Hist("pT_s1_hotvr2_tagged")->Fill(genparticles->at(bestjetindex).pt(),weight);
 	 if(SortedSubJets.size()>2 && hotvr_jets[i].m()>mtopLow &&  hotvr_jets[i].m()<mtopHigh)  Hist("pT_s1_hotvr3_tagged")->Fill(genparticles->at(bestjetindex).pt(),weight);
-	 if(SortedSubJets.size()>2 && hotvr_jets[i].m()>mtopLow &&  hotvr_jets[i].m()<mtopHigh    &&SortedSubJets.at(0).pt()>30 &&SortedSubJets.at(1).pt()>30&&  SortedSubJets.at(0).pt()/hotvr_jets[i].pt()<0.8 /*&&mmin2>50*/)  Hist("pT_s1_hotvr6_tagged")->Fill(genparticles->at(bestjetindex).pt(),weight);
+	 if(SortedSubJets.size()>2 && hotvr_jets[i].m()>mtopLow &&  hotvr_jets[i].m()<mtopHigh    &&SortedSubJets.at(0).pt()>30 &&SortedSubJets.at(1).pt()>30&&  SortedSubJets.at(0).pt()/hotvr_jets[i].pt()<0.8 )  Hist("pT_s1_hotvr6_tagged")->Fill(genparticles->at(bestjetindex).pt(),weight);
 	 if(SortedSubJets.size()>2 && hotvr_jets[i].m()>mtopLow &&  hotvr_jets[i].m()<mtopHigh && mmin>50 && hotvr_jets.size()>2)  Hist("pT_s1_hotvr4_tagged")->Fill(genparticles->at(bestjetindex).pt(),weight);
 	
 	 //Fill jet radius as function of pT
@@ -766,27 +771,27 @@ void RocHistsGen::Fill()
 	       ((TH2D*)Hist("nsub_eff"))->Fill(genparticles->at(bestjetindex).pt(),roc/100.,weight);
 	    
 	     }}
-	   }
+	 }
 	 
        }
 	}
+      }
     }
+  
+
+    
+    
+
+  
+  
+  
+  
+
+
   }
-  
-
-    
-    
-
-  
-  
-  
-  
 
 
-}
-
-
-void RocHistsGen::Finish()
+void HOTVRHists::Finish()
 {
   // final calculations, like division and addition of certain histograms
   EventCalc* calc = EventCalc::Instance();

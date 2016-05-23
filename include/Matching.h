@@ -44,7 +44,7 @@ class Matching{
   void UpdateSkipList(GenParticle* top, std::vector<GenParticle>* genparticles, std::vector<bool>& skip);
   fastjet::PseudoJet convert_particle(GenParticle* genparticle);
   std::vector<fastjet::PseudoJet> get_parton_jets(std::vector<fastjet::PseudoJet> parts);
- 
+  bool IsHadronic(GenParticle* p,  std::vector<GenParticle>* genparticles);
  public:
   void Run_matching(std::vector<GenParticle>* genparticles);
   Matching();

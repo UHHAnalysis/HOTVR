@@ -35,20 +35,7 @@ void SubstructureHists::Init()
 
  
  
-  Book( TH1F( "pT_s1"," p_{T} topjets (selection)",75,0,3000));
-  Book( TH1F( "pT_s1_all"," p_{T} topjets (selection)",75,0,3000));
-  Book( TH1F( "eta_s1_all"," eta topjets (selection)",20,-3,3));
-  Book( TH1F( "pT_s1_mis"," p_{T} topjets (selection)",75,0,3000));
-  Book( TH1F( "pT_s1400"," p_{T} topjets (selection)",75,0,3000));
-  Book( TH1F( "pT_s1_cms_tagged400"," p_{T} topjets (cms tagged)",75,0,3000));
-  Book( TH1F( "pT_s1_cms_nsub_tagged"," p_{T}  nsubjettiness (cms tagged)",75,0,3000));
-  Book( TH1F( "pT_s1_hotvr_tagged"," p_{T} topjets (hotvr tagged)",75,0,3000));
-  Book( TH1F( "pT_s1_hotvr2_tagged"," p_{T} topjets (hotvr tagged)",75,0,3000));
-  Book( TH1F( "pT_s1_hotvr3_tagged"," p_{T} topjets (hotvr tagged)",75,0,3000));
-  Book( TH1F( "pT_s1_hotvr4_tagged"," p_{T} topjets sd mass (hotvr tagged)",75,0,3000));
-  Book( TH1F( "pT_s1_hotvr5_tagged"," p_{T} topjets nsubjettiness (hotvr tagged)",75,0,3000));
-  Book( TH1F( "pT_s1_hotvr6_tagged"," p_{T} topjets w mass (hotvr tagged)",75,0,3000));
-  Book( TH1F( "eta_s1_hotvr6_tagged"," eta topjets w mass (hotvr tagged)",20,-3,3));
+ 
   
   
   
@@ -64,9 +51,9 @@ void SubstructureHists::Init()
 
   Book(TH2F("VariableR","VariableR",1000,0,2000,20,0,40));
  
+  Book(TH1D("jet_pT","jet p_{T}",100,0,1000));
  
- 
-  Book(TH1D("mmin","massjump mmin",50,0,100));
+  Book(TH1D("mmin","massjump mmin",100,0,200));
  
 
   Book(TH1D("mjet","mjet",100,0,300));
@@ -132,9 +119,10 @@ void SubstructureHists::Init()
   Book( TH1F( "phi_subjet3_ly","#phi 3rd subjet",100,-M_PI,M_PI));
   Book( TH1F( "phi_subjet4","#phi 4th subjet",100,-M_PI,M_PI));
   Book( TH1F( "phi_subjet4_ly","#phi 4th subjet",100,-M_PI,M_PI));
-
-  Book( TH2D("nsub_eff","eff nsub",75,0,3000,100,-0.005,0.995));
-  Book( TH2D("nsub_eff_norm","eff nsub",75,0,3000,100,-0.005,0.995));
+  Book( TH1F("mass_subjet1","mass subjet1",100,0,250));
+  Book( TH1F("mass_subjet2","mass subjet2",100,0,250));
+  Book( TH1F("mass_subjet3","mass subjet3",100,0,250));
+  Book( TH1F("mass_subjet4","mass subjet4",100,0,250));
  
   Book(TH1D("ptfraction1","p_{T,sub1}/p_{T,jet} [GeV]",20,0,1));
  
@@ -177,28 +165,24 @@ void SubstructureHists::Fill(fastjet::PseudoJet jet,double jet_radius, fastjet::
 	  }
 	  mmin = std::min(m01,std::min(m02,m12));
 
-	  std::cout<<"mmin1 "<<mmin<<std::endl;
-	  std::cout<<"mmin2 "<<jet.user_info<HOTVRinfo>().mmin()<<std::endl;
-
-	  
+	 	  
 	  double jet_mass=jet.m();
 	  double jet_mmin=mmin;
 	  int jet_nsubjets=SortedSubJets.size();
-	  double jet_ptfraction=SortedSubJets.at(0).pt()/jet.pt();
+	
 	  double jet_subjet1pt=0;
 	  double jet_subjet2pt=0;
 	  if(SortedSubJets.size()>0) jet_subjet1pt=SortedSubJets.at(0).pt();//Fill subjet pT
 	  if(SortedSubJets.size()>1) jet_subjet2pt=SortedSubJets.at(1).pt();//Fill subjet pT
       
      
-
+	  Hist("jet_pT")->Fill(jet.pt(),weight); //Fill jet pT
       
 	 //Fill number of subjets
 	 Hist("nsubjets")->Fill(SortedSubJets.size(),weight);
-	 std::cout<<"nsubjets1 "<<SortedSubJets.size()<<std::endl;
-	  std::cout<<"nsubjets2 "<<jet.user_info<HOTVRinfo>().nsubjets()<<std::endl;
+	 //	 std::cout<<"subjet const "<<SortedSubJets.at(0).constituents().size()<<std::endl;
 
-     
+	
 	 //Fill mmin
 	 Hist("mmin")->Fill(mmin,weight);
 	
@@ -221,6 +205,8 @@ void SubstructureHists::Fill(fastjet::PseudoJet jet,double jet_radius, fastjet::
 		 Hist(hname_phi)->Fill(SortedSubJets.at(bk).phi(),weight);
 		 TString hname_phi_ly = TString::Format("phi_subjet%d_ly", bk+1);
 		 Hist(hname_phi_ly)->Fill(SortedSubJets.at(bk).phi(),weight);
+		 TString hname_mass= TString::Format("mass_subjet%d",bk+1);
+		 Hist(hname_mass)->Fill(SortedSubJets.at(bk).m(),weight);
 
 	       }
 	   }
@@ -232,27 +218,20 @@ void SubstructureHists::Fill(fastjet::PseudoJet jet,double jet_radius, fastjet::
 	
 
 
-	 
+	  std::cout<<"here3"<<std::endl;
 	 //Fill pT fraction
-	 Hist("ptfraction1")->Fill( SortedSubJets.at(0).pt()/jet.pt(),weight);
-	 std::cout<<"ptfraction1 "<< SortedSubJets.at(0).pt()/jet.pt()<<" "<< SortedSubJets.at(0).pt()/jet.phi()<<std::endl;
-	 std::cout<<"ptfraction2 "<<jet.user_info<HOTVRinfo>().ptfraction(0)<<std::endl;
+	  if(SortedSubJets.size()>0) Hist("ptfraction1")->Fill( SortedSubJets.at(0).pt()/jet.pt(),weight);
+
 	 
-	 //Fill nominator hists
-	 // if(SortedSubJets.size()>2)  Hist("pT_s1_hotvr_tagged")->Fill(matched_jet.pt(),weight);
-	 /* if(hotvr_jets[i].m()>mtopLow &&  hotvr_jets[i].m()<mtopHigh)  Hist("pT_s1_hotvr2_tagged")->Fill(matched_jet.pt(),weight);
-	 if(SortedSubJets.size()>2 && hotvr_jets[i].m()>mtopLow &&  hotvr_jets[i].m()<mtopHigh)  Hist("pT_s1_hotvr3_tagged")->Fill(matched_jet.pt(),weight);
-	 if(SortedSubJets.size()>2 && hotvr_jets[i].m()>mtopLow &&  hotvr_jets[i].m()<mtopHigh    &&SortedSubJets.at(0).pt()>30 &&SortedSubJets.at(1).pt()>30&&  SortedSubJets.at(0).pt()/hotvr_jets[i].pt()<0.8 )  Hist("pT_s1_hotvr6_tagged")->Fill(matched_jet.pt(),weight);
-	 if(SortedSubJets.size()>2 && hotvr_jets[i].m()>mtopLow &&  hotvr_jets[i].m()<mtopHigh && mmin>50 && hotvr_jets.size()>2)  Hist("pT_s1_hotvr4_tagged")->Fill(matched_jet.pt(),weight);
-	 */
 	 //Fill jet radius as function of pT
 	  ((TH2D*)Hist("VariableR"))->Fill(jet.perp(),jet_radius*10,weight); 
        
 	 //calculate nsubjettiness
-	
+	  std::cout<<"here2"<<std::endl;
 	 if(jet.constituents().size()>0){
 	   double tau1,tau2,tau3,tau4;
 	   JetPropsPseudo jp(&jet);
+	   jet_radius=1.5;
 	   tau1 = jp.GetNsubjettiness(1, Njettiness::onepass_kt_axes, 1., jet_radius);
 	   tau2 = jp.GetNsubjettiness(2, Njettiness::onepass_kt_axes, 1., jet_radius);
 	   tau3 = jp.GetNsubjettiness(3, Njettiness::onepass_kt_axes, 1., jet_radius );
@@ -275,23 +254,13 @@ void SubstructureHists::Fill(fastjet::PseudoJet jet,double jet_radius, fastjet::
 	 
 	 //Fill more nominator hists
 	
-	   /*if(SortedSubJets.size()>2 &&  hotvr_jets[i].m()>mtopLow &&   hotvr_jets[i].m()<mtopHigh &&tau3/tau2<0.7  &&SortedSubJets.at(0).pt()>30 &&SortedSubJets.at(1).pt()>30&&  SortedSubJets.at(0).pt()/hotvr_jets[i].pt()<0.8 &&mmin>50)  Hist("pT_s1_hotvr5_tagged")->Fill(matched_jet.pt(),weight);
-	 if(SortedSubJets.size()>2 &&  hotvr_jets[i].m()>mtopLow &&   hotvr_jets[i].m()<mtopHigh   &&SortedSubJets.at(0).pt()>30 &&SortedSubJets.at(1).pt()>30&&  SortedSubJets.at(0).pt()/hotvr_jets[i].pt()<0.8 &&mmin>50) for(int roc=0;roc<100;roc++){
-	     if(tau3/tau2<roc/100.){
-	       ((TH2D*)Hist("nsub_eff"))->Fill(matched_jet.pt(),roc/100.,weight);
-	    
-	     }}*/
+	 
 	 }
 	 
        
      }
  
-} // std::cout<<denominator_jets.size()<<std::endl;
-   /*for(int y=0;y<denominator_jets.size();y++){
-	Hist("pT_s1_all")->Fill(denominator_jets.at(y).pt(),weight); //fill denominator hists for efficiecies
-	for(int roc=0;roc<100;roc++) {((TH2D*)Hist("nsub_eff_norm"))->Fill(denominator_jets.at(y).pt(),roc/100.,weight);}//Fill denominator hist for nsubjettiness scan
-
-	}*/
+} 
    
 	  
 	   
