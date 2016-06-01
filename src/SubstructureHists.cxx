@@ -125,9 +125,9 @@ void SubstructureHists::Init()
   Book( TH1F("mass_subjet4","mass subjet4",100,0,250));
  
   Book(TH1D("ptfraction1","p_{T,sub1}/p_{T,jet} [GeV]",20,0,1));
+
  
   
-  clustering=new Clustering();
 
 }
 
@@ -163,13 +163,10 @@ void SubstructureHists::Fill(fastjet::PseudoJet jet,double jet_radius, fastjet::
 	    Hist("subjet02")->Fill(m02,weight);
 	    Hist("subjet12")->Fill(m12,weight);
 	  }
-	  mmin = std::min(m01,std::min(m02,m12));
+	  mmin = jet.user_info<HOTVRinfo>().mmin();
 
 	 	  
-	  double jet_mass=jet.m();
-	  double jet_mmin=mmin;
-	  int jet_nsubjets=SortedSubJets.size();
-	
+	  
 	  double jet_subjet1pt=0;
 	  double jet_subjet2pt=0;
 	  if(SortedSubJets.size()>0) jet_subjet1pt=SortedSubJets.at(0).pt();//Fill subjet pT
@@ -180,13 +177,12 @@ void SubstructureHists::Fill(fastjet::PseudoJet jet,double jet_radius, fastjet::
       
 	 //Fill number of subjets
 	 Hist("nsubjets")->Fill(SortedSubJets.size(),weight);
-	 //	 std::cout<<"subjet const "<<SortedSubJets.at(0).constituents().size()<<std::endl;
-
+	 
 	
 	 //Fill mmin
 	 Hist("mmin")->Fill(mmin,weight);
 	
-	 //Fill subjet pT
+	 //Fill subjet properties
 	 for (unsigned int bk =0; bk<=3; ++bk)
 	   {
 	     if (SortedSubJets.size()> bk)
@@ -218,7 +214,6 @@ void SubstructureHists::Fill(fastjet::PseudoJet jet,double jet_radius, fastjet::
 	
 
 
-	  std::cout<<"here3"<<std::endl;
 	 //Fill pT fraction
 	  if(SortedSubJets.size()>0) Hist("ptfraction1")->Fill( SortedSubJets.at(0).pt()/jet.pt(),weight);
 
@@ -227,7 +222,7 @@ void SubstructureHists::Fill(fastjet::PseudoJet jet,double jet_radius, fastjet::
 	  ((TH2D*)Hist("VariableR"))->Fill(jet.perp(),jet_radius*10,weight); 
        
 	 //calculate nsubjettiness
-	  std::cout<<"here2"<<std::endl;
+	
 	 if(jet.constituents().size()>0){
 	   double tau1,tau2,tau3,tau4;
 	   JetPropsPseudo jp(&jet);
@@ -252,7 +247,7 @@ void SubstructureHists::Fill(fastjet::PseudoJet jet,double jet_radius, fastjet::
 	   Hist("tau3tau2")->Fill(tau3/tau2,weight);
 	  
 	 
-	 //Fill more nominator hists
+	
 	
 	 
 	 }

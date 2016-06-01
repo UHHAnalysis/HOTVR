@@ -22,38 +22,42 @@
 //typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<double> > LorentzVectorXYZE;
 class Clustering{
  private:
+  fastjet::PseudoJet _setup_jet;
   static  Clustering* m_instance;
   mutable SLogger m_logger;
   fastjet::ClusterSequence* _clust_seq2;
   std::vector<fastjet::PseudoJet> _fatjets;
- 
+  double get_value(std::string word);
+  void set_modus(std::string word);
+  void show_settings();
+  std::string get_modus();
+  std::vector<fastjet::PseudoJet> set_properties(std::vector<fastjet::PseudoJet> jets);
  public:
  enum E_algorithm { 
     e_ca, 
     e_akt,
     e_kt,
-    e_varR_ca,
-    e_varR_akt,
-    e_varR_kt,
-    e_massjump_ca,
-    e_massjump_akt,
-    e_massjump_kt,
    };
  E_algorithm m_test;
-
-Clustering();
+ Clustering();
+ Clustering(std::string clustering);
   ~Clustering();
  static Clustering* Instance();
  void Reset();
   
-
+ fastjet::PseudoJet get_settings(){return _setup_jet;};
  //usual squentiell clustering
+ std::vector<fastjet::PseudoJet> get_clustered_jets(std::vector<fastjet::PseudoJet> particles);
   std::vector<fastjet::PseudoJet> get_clustered_jets(std::vector<fastjet::PseudoJet> particles,enum Clustering::E_algorithm algorithm, double jet_radius, double ptmin);
   //variableR algorithm
   std::vector<fastjet::PseudoJet> get_clustered_jets(std::vector<fastjet::PseudoJet> particles,enum  Clustering::E_algorithm algorithm, double ptmin, double rho, double min_r, double max_r);
   //  std::vector<fastjet::PseudoJet> get_clustered_jets(std::vector<fastjet::PseudoJet> particles,enum  Clustering::E_algorithm algorithm, double jet_radius,double ptmin, double rho, double min_r, double max_r);
   std::vector<fastjet::PseudoJet> get_clustered_hotvr_jets(std::vector<fastjet::PseudoJet> particles,enum  Clustering::E_algorithm algorithm, double ptmin, double rho, double min_r, double max_r, double mu, double theta, double pt_cut);
+  void jets(std::string clustering);
 
+  double _rho, _mu, _theta, _rmin, _rmax, _ptmin,_radius,_pt_cut;
+  string _clustering_algorithmus;
+ 
 };
 
 #endif
