@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd"
+[
+
+
+
+<!ENTITY TTbargenerator_flat SYSTEM "/afs/desy.de/user/t/tlapsien/Analysis/Sframex/SFrameAnalysis/config/Samples_TTBSM53/ttbar_generator.xml">
+<!ENTITY QCDgenerator_flat SYSTEM "/afs/desy.de/user/t/tlapsien/Analysis/Sframex/SFrameAnalysis/config/Samples_TTBSM53/qcd_generator.xml">
+
+
+]>
+
+
+
+<JobConfiguration JobName="JetDisplayAnimationCycleJob" OutputLevel="INFO">
+    
+	<Library Name="libfastjet"/>
+	<Library Name="libfastjettools"/>
+	<Library Name="libJetMETObjects" />
+	<Library Name="libSFramePlugIns"/>
+	<Library Name="libSFrameTools"/>
+	<Library Name="libNtuple"/>
+	<Library Name="libAnalysis"/>
+	<Library Name="libHOTVR"/>
+	<Library Name="libTMVA"/>
+
+	<Package Name="SFrameCore.par" />
+	<Package Name="SFramePlugIns.par" />
+	<Package Name="Ntuple.par" />
+	<Package Name="Analysis.par" />
+	<Package Name="HOTVR.par" />
+	
+<Cycle Name="JetDisplayAnimationCycle" OutputDirectory="/nfs/dust/cms/user/tlapsien/hhtt_paper/" PostFix="_tight_selection7_hotvr_sub0" TargetLumi="19708" >
+
+<!--<Cycle Name="JetDisplayCycle"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/tlapsien/PROOF/" OutputDirectory="/nfs/dust/cms/user/tlapsien/hhtt_paper/" PostFix="_ptcut20_test7" TargetLumi="19708" >
+-->
+
+<InputData Lumi="1.0" NEventsSkip="5590" NEventsMax="1" Type="MC" Version="TTbarEff_gen" Cacheable="True">
+&TTbargenerator_flat;
+<InputTree Name="AnalysisTree" />
+</InputData>
+
+<!--
+<InputData Lumi="1.0" NEventsMax="30000" Type="MC" Version="QCD_gen" Cacheable="True">
+&QCDgenerator_flat;
+<InputTree Name="AnalysisTree" />
+</InputData>
+-->
+
+
+
+		<UserConfig>
+		  <Item Name="readCommonInfo" Value="False" />
+
+		   <Item Name="GenParticleCollection" Value="GenParticles" /> 
+		   <Item Name="Tagger" Value="HOTVR" />
+		  <Item Name="Clustering" Value="/afs/desy.de/user/t/tlapsien/Analysis/Sframex/HOTVR/config/hotvr.config" />
+		      
+                </UserConfig>
+	</Cycle>
+</JobConfiguration>
